@@ -7,27 +7,42 @@
 //
 
 import XCTest
+@testable import Heroes
 
 class KeychainItemTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    var globalUUID: UUID!
+    @KeychainItem(account: "testKey") private var testKey
+    
+    override func setUp() {
+        globalUUID = UUID()
+        testKey = globalUUID.uuidString
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testKeychainItemNotNil() {
+        XCTAssertNotNil(testKey)
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testKeychainItemAddKey() {
+        let key = UUID()
+        testKey = key.uuidString
+        
+        XCTAssertEqual(key.uuidString, testKey)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testKeychainItemDeleteKey() {
+        testKey = nil
+        XCTAssertNil(testKey)
     }
-
+    
+    func testKeychainItemAddNewKey() {
+        let key = UUID()
+        testKey = key.uuidString
+        XCTAssertEqual(key.uuidString, testKey)
+        
+        let newKey = "6031fa35-ff79-41d8-bd1f-5952ee899082"
+        testKey = newKey
+        XCTAssertEqual(testKey, newKey)
+    }
+    
 }
