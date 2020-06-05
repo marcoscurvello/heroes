@@ -14,10 +14,9 @@ class Server {
         
     static let shared = Server()
     public var baseURL: URL
-    public var authenticated: Bool { auth != nil }
-    typealias Keys = (public: String, private: String)?
+    public var authenticated: Bool { _auth != nil }
     
-    private var auth: Auth? = nil
+    private var _auth: Auth? = nil
     private var _credentials = Credentials()
     
     init(_ baseURL: URL = URL(string: "https://gateway.marvel.com")!) {
@@ -25,17 +24,22 @@ class Server {
         guard let keys = _credentials.keys else {
             return
         }
-        self.auth = Auth(keys: keys)
+        self._auth = Auth(keys: keys)
     }
     
     func authenticate(keys: ServerKeysFromDisk) {
         _credentials = Credentials(keys: (public: keys.public, private: keys.private))
-        auth = Auth(keys: _credentials.keys)
+        _auth = Auth(keys: _credentials.keys)
     }
     
-    func authenticatedCharacterRequest() -> CharacterRequest {
-        guard let parameters = auth?.parameters else {
-            fatalError("Attempting to create authenticated request without a valid auth instance")
+    func invalidateCredentials() {
+        _credentials.keys = nil
+        _auth = nil
+    }
+    
+    func authenticatedCharacterRequest() throws -> CharacterRequest {
+        guard let parameters = _auth?.parameters else {
+            throw ServerError.Unauthenticated("Attempting to authenticate request without a valid Auth instance.")
         }
         return CharacterRequest(baseURL, auth: parameters)
     }
@@ -44,6 +48,12 @@ class Server {
 
 extension Server {
     
+    typealias Keys = (public: String, private: String)?
+    
+    enum ServerError: Error, Equatable {
+        case Unauthenticated(String)
+    }
+
     struct Auth {
         @HashedItem private var hash: String?
         var parameters: [Query]?
