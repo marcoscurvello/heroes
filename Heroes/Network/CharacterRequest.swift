@@ -16,7 +16,9 @@ protocol Request {
 }
 
 struct CharacterRequest: Request {
+    
     typealias ResponseDataType = Response<DataContainer<Character>>
+    
     enum Path {
         case base
         case detail(String)
@@ -35,6 +37,7 @@ struct CharacterRequest: Request {
             }
         }
     }
+    
     let baseURL: URL
     let path: Path
     let auth: [Query]?
@@ -47,18 +50,14 @@ struct CharacterRequest: Request {
     
     func composeRequest(with parameters: [Query] = []) throws -> URLRequest {
         let queryItems = auth == nil ? parameters : parameters + auth!
-        print("QueryItems: \(queryItems)")
-        
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
         components.path = path.string
         components.queryItems = queryItems.toItems()
-        
-        print("\(#function) Componenets: \(components)")
-        print("\(#function) URL: \(components.url!)")
         return URLRequest(url: components.url!)
     }
     
     func parse(data: Data?) throws -> ResponseDataType {
         return try JSONDecoder().decode(ResponseDataType.self, from: data!)
     }
+    
 }
