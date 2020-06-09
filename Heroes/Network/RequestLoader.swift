@@ -22,6 +22,7 @@ enum RequestLoaderError: Error {
     case ServerSide(ServerSideError)
     case Decoding(Error)
     case RequestCompose(Error)
+    case Network(Error?)
 }
 
 class RequestLoader<T: Request> {
@@ -37,13 +38,17 @@ class RequestLoader<T: Request> {
         do {
             let req = try request.composeRequest(with: data)
             session.dataTask(with: req) { data, response, error in
+                
                 if let error = error {
                     onComplete(.failure(RequestLoaderError.Transport(error)))
                 }
                 
-                let response = response as! HTTPURLResponse
-                let status = response.statusCode
+                guard let response = response as? HTTPURLResponse else {
+                    onComplete(.failure(RequestLoaderError.Network(error)))
+                    return
+                }
                 
+                let status = response.statusCode
                 guard self.expected200to300(status) else {
                     onComplete(.failure(RequestLoaderError.ServerSide(ServerSideError(statusCode: status, response: response))))
                     return
