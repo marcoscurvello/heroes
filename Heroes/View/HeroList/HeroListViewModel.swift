@@ -35,11 +35,7 @@ class HeroListViewModel {
         request = try? self.server.characterBaseRequest()
         requestLoader = RequestLoader(request: request)
     }
-    
-    deinit {
-        print("\(type(of: self)) deinit")
-    }
-    
+
     // MARK: Pagination
     
     private let defaultPageSize = 20

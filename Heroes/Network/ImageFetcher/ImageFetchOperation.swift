@@ -35,9 +35,5 @@ class ImageFetchOperation: Operation {
         
         fetchedImage = UIImage(data: imageData)
     }
-    
-    deinit {
-        print("\(type(of: self)) deinit")
-    }
 
 }

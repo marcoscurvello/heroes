@@ -38,7 +38,6 @@ class RequestLoaderTests: XCTestCase {
                 
                 let response = try result.get()
                 
-                print("Response: \(response)")
                 XCTAssertEqual(response.data.results.first, Character(id: 1011334, name: "3-D Man", description: "", modified: "2014-04-29T14:18:17-0400", resourceURI: "http://gateway.marvel.com/v1/public/characters/1011334", urls: nil, thumbnail: Image(path: "http://i.annihil.us/u/prod/marvel/i/mg/c/e0/535fecbbb9784", extension: "jpg"), comics: nil, stories: nil, events: nil, series: nil))
                 
                 expectation.fulfill()

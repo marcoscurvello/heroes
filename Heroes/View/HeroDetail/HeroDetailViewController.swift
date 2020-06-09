@@ -43,11 +43,7 @@ class HeroDetailViewController: UIViewController {
         self.character = character
         self.viewModel = viewModel
     }
-    
-    deinit {
-        print("\(type(of: self)): deinit")
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
