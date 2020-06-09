@@ -161,7 +161,7 @@ extension HeroListViewController: UICollectionViewDataSourcePrefetching {
     
 }
 
-extension HeroListViewController: HeroListViewModelErrorHandler, SearchResultsViewModelDelegate {
+extension HeroListViewController: HeroListViewModelErrorHandler, SearchResultsViewModelErrorHandler {
     
     func viewModelDidReceiveError(error: UserFriendlyError) {
         self.presentAlertWithMessage(message: error)
