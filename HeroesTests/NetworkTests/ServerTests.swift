@@ -11,6 +11,10 @@ import XCTest
 
 class ServerTests: XCTestCase {
     
+    override func tearDown() {
+        Server.shared.invalidateCredentials()
+    }
+    
     func testServerDefaultBaseURL() {
         let localTestServer = Server()
         XCTAssertEqual(localTestServer.baseURL, URL(string: "https://gateway.marvel.com"))
@@ -29,7 +33,9 @@ class ServerTests: XCTestCase {
         if localTestServer.authenticated {
             localTestServer.invalidateCredentials()
         }
-        XCTAssertThrowsError(try localTestServer.authenticatedCharacterRequest()) { error in
+        
+        
+        XCTAssertThrowsError(try localTestServer.characterBaseRequest()) { error in
             XCTAssertEqual(error as! Server.ServerError, Server.ServerError.Unauthenticated("Attempting to authenticate request without a valid Auth instance."))
         }
     }
@@ -46,8 +52,8 @@ class ServerTests: XCTestCase {
         let testServerKeys = ServerKeysFromDisk(private: "2543c3ff5796cc4f4d4862549f24316a", public: "2543c3ff5796cc4f4d4862549f24316a")
         localTestServer.authenticate(keys: testServerKeys)
 
-        let testCharactersRequest = try localTestServer.authenticatedCharacterRequest()
-        XCTAssertNotNil(testCharactersRequest.auth)
+        let testCharactersRequest = try? localTestServer.characterBaseRequest()
+        XCTAssertNotNil(testCharactersRequest)
     }
     
 }

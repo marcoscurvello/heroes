@@ -12,13 +12,14 @@ import XCTest
 class CharacterRequestTests: XCTestCase {
 
     var baseURL: URL!
+    struct AtestType: Decodable {}
     
     override func setUp() {
         baseURL = URL(string: "https://gateway.marvel.com")!
     }
         
     func testCharactersRequestBase() throws {
-        let characterBase = CharacterRequest(baseURL)
+        let characterBase = CharacterRequest<AtestType>(baseURL)
         let request = try characterBase.composeRequest()
         XCTAssertEqual(request.url?.path, "/v1/public/characters")
         
@@ -27,7 +28,7 @@ class CharacterRequestTests: XCTestCase {
     }
 
     func testCharactersRequestDetail() throws {
-        let characterDetail = CharacterRequest(baseURL, path: .detail("1016823"))
+        let characterDetail = CharacterRequest<AtestType>(baseURL, path: .detail("1016823"))
         let request = try characterDetail.composeRequest()
         XCTAssertEqual(request.url?.path, "/v1/public/characters/1016823")
         
@@ -36,7 +37,7 @@ class CharacterRequestTests: XCTestCase {
     }
 
     func testCharactersRequestComics() throws {
-        let characterComics = CharacterRequest(baseURL, path: .comics("1010846"))
+        let characterComics = CharacterRequest<AtestType>(baseURL, path: .comics("1010846"))
         let request = try characterComics.composeRequest()
         XCTAssertEqual(request.url?.path, "/v1/public/characters/1010846/comics")
         
@@ -45,7 +46,7 @@ class CharacterRequestTests: XCTestCase {
     }
     
     func testCharactersRequestEvents() throws {
-        let characterEvents = CharacterRequest(baseURL, path: .events("1011266"))
+        let characterEvents = CharacterRequest<AtestType>(baseURL, path: .events("1011266"))
         let request = try characterEvents.composeRequest()
         XCTAssertEqual(request.url?.path, "/v1/public/characters/1011266/events")
         
@@ -54,7 +55,7 @@ class CharacterRequestTests: XCTestCase {
     }
     
     func testCharactersRequestStories() throws {
-        let characterStories = CharacterRequest(baseURL, path: .stories("1009146"))
+        let characterStories = CharacterRequest<AtestType>(baseURL, path: .stories("1009146"))
         let request = try characterStories.composeRequest()
         XCTAssertEqual(request.url?.path, "/v1/public/characters/1009146/stories")
         
