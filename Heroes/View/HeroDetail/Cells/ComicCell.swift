@@ -25,9 +25,9 @@ class ComicCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.imageView.image = nil
-        self.titleLabel.text = nil
-        self.categoryLabel.text = nil
+        display(image: nil)
+        titleLabel.text = nil
+        categoryLabel.text = nil
     }
     
     func display(image: UIImage?) {
