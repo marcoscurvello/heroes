@@ -37,11 +37,43 @@ class Server {
         _auth = nil
     }
     
-    func authenticatedCharacterRequest() throws -> CharacterRequest {
+//    func authenticatedCharacterRequest(_ path: CharacterRequest.Path) throws -> CharacterRequest {
+//
+//        return CharacterRequest(baseURL, path: path, auth: parameters)
+//    }
+    
+    private func authQueryItems() throws -> [Query] {
         guard let parameters = _auth?.parameters else {
             throw ServerError.Unauthenticated("Attempting to authenticate request without a valid Auth instance.")
         }
-        return CharacterRequest(baseURL, auth: parameters)
+        return parameters
+    }
+    
+    /// CharacterRequest of Comics
+    /// - Parameter id: String identifier of character
+    /// - Returns: Authenticated request with matching Entity type
+    func characterBaseRequest() throws -> CharacterRequest<Character> {
+        return CharacterRequest(baseURL, path: .base, auth: try authQueryItems())
+    }
+    
+    func characterDetailRequest(id: String) throws -> CharacterRequest<Character> {
+        return CharacterRequest(baseURL, path: .detail(id), auth: try authQueryItems())
+    }
+    
+    func characterComicsRequest(id: String) throws -> CharacterRequest<Comic> {
+        return CharacterRequest(baseURL, path: .comics(id), auth: try authQueryItems())
+    }
+    
+    func characterEventsRequest(id: String) throws -> CharacterRequest<Event> {
+        return CharacterRequest(baseURL, path: .events(id), auth: try authQueryItems())
+    }
+    
+    func characterSeriesRequest(id: String) throws -> CharacterRequest<Serie> {
+        return CharacterRequest(baseURL, path: .series(id), auth: try authQueryItems())
+    }
+    
+    func characterStoriesRequest(id: String) throws -> CharacterRequest<Storie> {
+        return CharacterRequest(baseURL, path: .stories(id), auth: try authQueryItems())
     }
     
 }
