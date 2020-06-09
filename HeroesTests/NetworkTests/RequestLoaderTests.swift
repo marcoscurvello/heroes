@@ -11,13 +11,13 @@ import XCTest
 
 class RequestLoaderTests: XCTestCase {
     
-    var loader: RequestLoader<CharacterRequest>!
+    var loader: RequestLoader<CharacterRequest<Character>>!
     let mockResponseJSON = "{\r\n    \"code\": 200,\r\n    \"status\": \"Ok\",\r\n    \"copyright\": \"2020 MARVEL\",\r\n    \"attributionText\": \"Data provided by Marvel. 2020 MARVEL\",\r\n    \"attributionHTML\": null,\r\n    \"etag\": \"3e75dea9d816b42f2fe5e6a37cccd2a04ada8568\",\r\n    \"data\": {\r\n        \"offset\": 0,\r\n        \"limit\": 20,\r\n        \"total\": 1493,\r\n        \"count\": 20,\r\n        \"results\": [{\r\n            \"id\": 1011334,\r\n            \"name\": \"3-D Man\",\r\n            \"description\": \"\",\r\n            \"modified\": \"2014-04-29T14:18:17-0400\",\r\n            \"thumbnail\": {\r\n                \"path\": \"http://i.annihil.us/u/prod/marvel/i/mg/c/e0/535fecbbb9784\",\r\n                \"extension\": \"jpg\"\r\n            },\r\n            \"resourceURI\": \"http://gateway.marvel.com/v1/public/characters/1011334\",\r\n            \"comics\": null,\r\n            \"series\": null,\r\n            \"stories\": null,\r\n            \"events\": null,\r\n            \"urls\": null\r\n        }]\r\n    }\r\n}\r\n".data(using: .utf8)
 
     override func setUp() {
         let baseURL = URL(string: "https://gateway.marvel.com")!
         let mockAuthQueryItems = [Query(name: "apikey", value: "1953195314397341439734")]
-        let request = CharacterRequest(baseURL, auth: mockAuthQueryItems)
+        let request = CharacterRequest<Character>(baseURL, auth: mockAuthQueryItems)
         
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
