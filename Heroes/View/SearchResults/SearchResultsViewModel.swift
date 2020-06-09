@@ -9,8 +9,12 @@
 import Foundation
 import UIKit
 
-protocol SearchResultsViewModelDelegate: NSObject {
+protocol SearchResultsViewModelErrorHandler: NSObject {
     func viewModelDidReceiveError(error: UserFriendlyError)
+}
+
+protocol SearchResultsViewModelSearchHandler: NSObject {
+    func updateSearchResult(with count: Int)
 }
 
 class SearchResultsViewModel {
@@ -29,14 +33,15 @@ class SearchResultsViewModel {
     var dataSource: UICollectionViewDiffableDataSource<SearchResultsViewController.Section, Character>!
     var currentSnapshot: NSDiffableDataSourceSnapshot<SearchResultsViewController.Section, Character>!
     
-    weak var errorHandler: SearchResultsViewModelDelegate?
+    weak var errorHandler: SearchResultsViewModelErrorHandler?
+    weak var searchInfoHandler: SearchResultsViewModelSearchHandler?
     
     init(server: Server? = Server.shared) {
         self.server = server
         self.request = try? server!.characterBaseRequest()
         self.requestLoader = RequestLoader(request: request)
     }
-
+    
     // MARK: Pagination
     
     private let defaultPageSize = 20
@@ -57,12 +62,12 @@ class SearchResultsViewModel {
         let newOffset = currentOffset + defaultPageSize
         return newOffset >= co.total ? false : true
     }
-        
+    
     struct SearchQuery: Equatable {
         let offset: Query
         let textInput: Query
     }
-
+    
     struct SearchResult {
         let total: Int
         let query: SearchQuery
@@ -88,7 +93,7 @@ class SearchResultsViewModel {
         self.requestLoader.load(data: [newSearchQuery.offset, newSearchQuery.textInput]) { [weak self] result in
             switch result {
             case .success(let response):
-                self?.updateSearchResult(data: response.data, with: SearchResult(total: response.data.total, query: newSearchQuery, data: response.data.results))
+                self?.updateSearchResult(with: SearchResult(total: response.data.total, query: newSearchQuery, data: response.data.results))
             case .failure(let error):
                 guard let self = self else { return }
                 self.state = .ready
@@ -96,8 +101,8 @@ class SearchResultsViewModel {
             }
         }
     }
-        
-    func updateSearchResult(data: DataContainer<Character>, with result: SearchResult) {
+    
+    func updateSearchResult(with result: SearchResult) {
         updateSearchDataSource(result)
         updateSearchResultsLabel(result.total)
     }
@@ -119,16 +124,9 @@ class SearchResultsViewModel {
     }
     
     func updateSearchResultsLabel(_ count: Int? = nil) {
-        //        guard let searchResultInformationView = searchResultInformationView else { return }
-        //        searchResultInformationView.presentInformation(count: count ?? 0)
-//        delegate?.viewModelUpdateSearchResultInformation(count: count ?? 0)
+        self.searchInfoHandler?.updateSearchResult(with: count ?? 0)
     }
-    
-    func updateSearchResultsActivity() {
-        //        guard let searchResultInformationView = searchResultInformationView else { return }
-        //        searchResultInformationView.presentActivity()
-    }
-    
+
     func resetSearchResultState() {
         currentSearchResult = nil
         currentSnapshot = nil
