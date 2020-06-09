@@ -29,12 +29,7 @@ class SearchResultsViewController: UICollectionViewController {
         configureCollectionView()
         configureDataSource()
     }
-    
-    
-    deinit {
-        print("\(type(of: self)) deinit")
-    }
-    
+
     func configureCollectionView() {
         let heroCell = UINib(nibName: HeroCell.nibIdentifier, bundle: nil)
         collectionView.register(heroCell, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)

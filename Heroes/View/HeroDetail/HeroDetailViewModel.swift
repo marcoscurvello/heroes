@@ -36,11 +36,7 @@ class HeroDetailViewModel {
     init(server: Server? = Server.shared) {
         self.server = server
     }
-    
-    deinit {
-        print("\(type(of: self)) deinit")
-    }
-    
+
     func update(character: Character, delegate: HeroDetailViewModelDelegate) {
         self.delegate = delegate
         self.character = character

@@ -36,11 +36,7 @@ class SearchResultsViewModel {
         self.request = try? server!.characterBaseRequest()
         self.requestLoader = RequestLoader(request: request)
     }
-    
-    deinit {
-        print("\(type(of: self)) deinit")
-    }
-    
+
     // MARK: Pagination
     
     private let defaultPageSize = 20
