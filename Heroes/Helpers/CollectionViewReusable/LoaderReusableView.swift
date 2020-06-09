@@ -10,7 +10,7 @@ import UIKit
 
 class LoaderReusableView: UICollectionReusableView {
     
-    static let elementKind = "loader-kind"
+    static let elementKind = "loader-reusable-kind"
     static let reuseIdentifier = "loader-reusable-id"
     
     let containerView = UIView()
