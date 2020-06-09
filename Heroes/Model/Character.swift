@@ -10,7 +10,7 @@ import Foundation
 
 struct Character: Decodable {
     let id: Int
-    let name: String?
+    let name: String
     let description: String?
     let modified: String?
     let resourceURI: String?
@@ -27,7 +27,6 @@ extension Character: Hashable, Equatable {
         hasher.combine(id)
         hasher.combine(name)
     }
-    
     static func == (lhs: Character, rhs: Character) -> Bool {
         return lhs.id == rhs.id && lhs.name == rhs.name
     }
