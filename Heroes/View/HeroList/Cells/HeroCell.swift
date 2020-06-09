@@ -26,7 +26,7 @@ class HeroCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        display(image: nil)
         character = nil
     }
     

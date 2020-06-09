@@ -23,6 +23,10 @@ class ResourceCell: UICollectionViewCell {
         configure()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        display(image: nil)
+    }
     
     func display(image: UIImage?) {
         DispatchQueue.main.async {
