@@ -15,9 +15,9 @@ protocol Request {
     func parse(data: Data?) throws -> ResponseDataType
 }
 
-struct CharacterRequest: Request {
+struct CharacterRequest<A: Decodable>: Request {
     
-    typealias ResponseDataType = Response<DataContainer<Character>>
+    typealias ResponseDataType = Response<DataContainer<A>>
     
     enum Path {
         case base
