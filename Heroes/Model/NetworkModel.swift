@@ -41,7 +41,7 @@ struct Url: Decodable {
     let url: String?
 }
 
-struct Image: Decodable {
+struct Image: Decodable, Hashable {
     let path: String?
     let `extension`: String?
 }
