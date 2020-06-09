@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Query: Equatable {
+struct Query: Equatable, Hashable {
     let name: String
     let value: String
 }
