@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol HeroCellDelegate: NSObject {
+    func heroCellFavoriteButtonTapped(character: Character)
+}
+
 class HeroCell: UICollectionViewCell {
     
     static let reuseIdentifier = "hero-cell-identifier"
@@ -16,13 +20,18 @@ class HeroCell: UICollectionViewCell {
 
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var imageViewBackground: UIView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var button: UIButton!
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    
+    @IBAction func favoriteButtonTapped(_ sender: UIButton) {
+        guard let delegate = delegate, let character = self.character else { return }
+        delegate.heroCellFavoriteButtonTapped(character: character)
     }
+    
+    weak var delegate: HeroCellDelegate?
+    
+    required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -45,7 +54,6 @@ class HeroCell: UICollectionViewCell {
         DispatchQueue.main.async {
             guard let image = image else {
                 self.imageView.contentMode = .center
-                self.imageView.backgroundColor = .systemGroupedBackground
                 self.imageView.image = placeholderImage.withTintColor(.systemGray5)
                 return
             }
@@ -59,17 +67,17 @@ class HeroCell: UICollectionViewCell {
     }
     
     private func configure() {
-        imageViewBackground.layer.cornerRadius = 58
-        imageViewBackground.clipsToBounds = true
-        
-        imageView.layer.cornerRadius = 52
+        imageView.layer.cornerRadius = 46
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleToFill
+        imageView.backgroundColor = .systemGray6
+        
+        imageView.layer.borderWidth = 2.0
+        imageView.layer.borderColor = UIColor.systemGray4.cgColor
         
         containerView.layer.cornerRadius = 12.0
         containerView.clipsToBounds = false
-        clipsToBounds = false
-    }    
+    }
     
 }
 
