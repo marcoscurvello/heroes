@@ -32,7 +32,6 @@ class ResourceCell: UICollectionViewCell {
         DispatchQueue.main.async {
             guard let image = image else {
                 self.imageView.contentMode = .center
-                self.imageView.backgroundColor = .systemGray6
                 self.imageView.image = placeholderImage
                 return
             }
@@ -46,6 +45,7 @@ class ResourceCell: UICollectionViewCell {
 extension ResourceCell {
     
     func configure() {
+        imageView.backgroundColor = .systemGray6
         imageView.contentMode = .scaleToFill
         imageView.clipsToBounds = true
         
