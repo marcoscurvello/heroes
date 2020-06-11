@@ -65,6 +65,7 @@ extension ComicCell {
         imageView.layer.borderColor = UIColor.black.cgColor
         imageView.layer.borderWidth = 1
         imageView.layer.cornerRadius = 4
+        imageView.backgroundColor = .systemGray6
                 
         let spacing = CGFloat(10)
         NSLayoutConstraint.activate([
