@@ -19,50 +19,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="460" height="120"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" semanticContentAttribute="forceLeftToRight" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Deadpool" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.29999999999999999" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PHH-yt-I1n">
-                                <rect key="frame" x="13" y="16" width="321" height="21.5"/>
+                                <rect key="frame" x="108" y="27.5" width="344" height="21.5"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="irf-DX-Tvw">
-                                <rect key="frame" x="342" y="4.5" width="118" height="111"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Fnt-T2-RK5">
-                                        <rect key="frame" x="5" y="5" width="108" height="101"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="108" id="HvS-sp-Saj"/>
-                                            <constraint firstAttribute="width" secondItem="Fnt-T2-RK5" secondAttribute="height" multiplier="108:101" id="soS-rk-JsT"/>
-                                            <constraint firstAttribute="height" constant="101" id="zYI-fv-p9O"/>
-                                        </constraints>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Fnt-T2-RK5">
+                                <rect key="frame" x="8" y="14" width="92" height="92"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="118" id="JZA-Fa-alY"/>
-                                    <constraint firstItem="Fnt-T2-RK5" firstAttribute="centerY" secondItem="irf-DX-Tvw" secondAttribute="centerY" id="N0q-BM-5ib"/>
-                                    <constraint firstItem="Fnt-T2-RK5" firstAttribute="centerX" secondItem="irf-DX-Tvw" secondAttribute="centerX" id="WN4-ML-rXU"/>
-                                    <constraint firstAttribute="height" constant="111" id="YeQ-0L-e1w"/>
+                                    <constraint firstAttribute="width" constant="92" id="HvS-sp-Saj"/>
+                                    <constraint firstAttribute="height" constant="92" id="zYI-fv-p9O"/>
                                 </constraints>
-                            </view>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e7r-Nf-Jqz">
-                                <rect key="frame" x="13" y="80" width="30" height="30"/>
+                                <rect key="frame" x="422" y="76" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="hps-VP-KkB"/>
                                     <constraint firstAttribute="width" constant="30" id="ywO-OG-WF7"/>
                                 </constraints>
                                 <color key="tintColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" image="star.circle.fill" catalog="system"/>
+                                <state key="normal" image="star" catalog="system"/>
+                                <state key="selected" image="star.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="favoriteButtonTapped:" destination="gTV-IL-0wX" eventType="touchUpInside" id="4Bt-gD-DfZ"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemGray5Color" red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="irf-DX-Tvw" firstAttribute="centerY" secondItem="VgJ-F7-jV5" secondAttribute="centerY" id="8hh-VA-T4u"/>
-                            <constraint firstItem="PHH-yt-I1n" firstAttribute="leading" secondItem="VgJ-F7-jV5" secondAttribute="leading" constant="13" id="I9G-Vg-3wY"/>
-                            <constraint firstItem="PHH-yt-I1n" firstAttribute="top" secondItem="VgJ-F7-jV5" secondAttribute="top" constant="16" id="M0r-JU-rsl"/>
-                            <constraint firstAttribute="trailing" secondItem="irf-DX-Tvw" secondAttribute="trailing" id="a3d-t4-P3j"/>
-                            <constraint firstItem="PHH-yt-I1n" firstAttribute="leading" secondItem="e7r-Nf-Jqz" secondAttribute="leading" id="gu3-N7-gqU"/>
-                            <constraint firstItem="irf-DX-Tvw" firstAttribute="leading" secondItem="PHH-yt-I1n" secondAttribute="trailing" constant="8" id="uo4-rZ-q6J"/>
-                            <constraint firstAttribute="bottom" secondItem="e7r-Nf-Jqz" secondAttribute="bottom" constant="10" id="vQy-X2-JHP"/>
+                            <constraint firstItem="Fnt-T2-RK5" firstAttribute="centerY" secondItem="VgJ-F7-jV5" secondAttribute="centerY" id="7uz-Mm-gFL"/>
+                            <constraint firstItem="PHH-yt-I1n" firstAttribute="centerY" secondItem="Fnt-T2-RK5" secondAttribute="centerY" constant="-22" id="Ecj-mw-t4C"/>
+                            <constraint firstItem="PHH-yt-I1n" firstAttribute="leading" secondItem="Fnt-T2-RK5" secondAttribute="trailing" constant="8" id="IIa-uv-bpp"/>
+                            <constraint firstItem="Fnt-T2-RK5" firstAttribute="leading" secondItem="VgJ-F7-jV5" secondAttribute="leading" constant="8" id="Tnh-9E-m03"/>
+                            <constraint firstItem="e7r-Nf-Jqz" firstAttribute="trailing" secondItem="PHH-yt-I1n" secondAttribute="trailing" id="d0B-64-yh6"/>
+                            <constraint firstAttribute="trailing" secondItem="PHH-yt-I1n" secondAttribute="trailing" constant="8" id="gCb-fG-MNP"/>
+                            <constraint firstItem="e7r-Nf-Jqz" firstAttribute="bottom" secondItem="Fnt-T2-RK5" secondAttribute="bottom" id="zsx-4n-glU"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -79,13 +70,13 @@
                 <outlet property="button" destination="e7r-Nf-Jqz" id="nD9-EL-dNL"/>
                 <outlet property="containerView" destination="VgJ-F7-jV5" id="l4w-R4-d0x"/>
                 <outlet property="imageView" destination="Fnt-T2-RK5" id="e63-wK-pK7"/>
-                <outlet property="imageViewBackground" destination="irf-DX-Tvw" id="axs-2g-sdn"/>
                 <outlet property="nameLabel" destination="PHH-yt-I1n" id="YWi-z0-kHd"/>
             </connections>
             <point key="canvasLocation" x="213.04347826086959" y="127.90178571428571"/>
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="star.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="star" catalog="system" width="128" height="116"/>
+        <image name="star.fill" catalog="system" width="128" height="116"/>
     </resources>
 </document>
