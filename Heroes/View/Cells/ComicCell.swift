@@ -71,8 +71,6 @@ extension ComicCell {
         imageView.layer.borderColor = UIColor.black.cgColor
         imageView.layer.borderWidth = 1
         imageView.layer.cornerRadius = 4
-        imageView.backgroundColor = .systemGray6
-
         imageView.contentMode = .center
         imageView.backgroundColor = .systemGray6
         imageView.image = placeholderResourceImage
