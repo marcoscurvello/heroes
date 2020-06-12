@@ -183,6 +183,8 @@ class SearchResultsViewModel: NSObject {
         self.infoHandler?.presentSearchResult(with: count ?? 0)
     }
 
+    // MARK: Reset State
+
     func resetSearchResultState() {
         currentSearchResult = nil
     }

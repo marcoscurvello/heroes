@@ -41,7 +41,7 @@ extension SearchResultsViewController: UISearchResultsUpdating, UISearchControll
     func willDismissSearchController(_ searchController: UISearchController) {
         searchResultsViewModel.resetSearchResultState()
     }
-        
+
     deinit {
         print("\(type(of: self)): \(#function)")
     }
