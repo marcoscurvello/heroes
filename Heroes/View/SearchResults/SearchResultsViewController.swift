@@ -16,47 +16,47 @@ class SearchResultsViewController: UICollectionViewController {
     var searchViewModel: SearchResultsViewModel!
     var searchResultInformationView: SearchReusableView!
     
-    required init?(coder: NSCoder) { super.init(coder: coder) }
-    
-    init(layout: UICollectionViewLayout, searchViewModel: SearchResultsViewModel? = SearchResultsViewModel()) {
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    init(layout: UICollectionViewLayout) {
         super.init(collectionViewLayout: layout)
-        self.searchViewModel = searchViewModel
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        searchViewModel.searchInfoHandler = self
+        searchViewModel.infoHandler = self
+        
         configureCollectionView()
         configureDataSource()
     }
     
     func configureCollectionView() {
-        let heroCell = UINib(nibName: HeroCell.nibIdentifier, bundle: nil)
-        collectionView.register(heroCell, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
-        collectionView.register(SearchReusableView.self, forSupplementaryViewOfKind: SearchReusableView.elementKind, withReuseIdentifier: SearchReusableView.reuseIdentifier)
         collectionView.backgroundColor = .systemBackground
-    }
-    
-    deinit {
-        print("\(type(of: self)): \(#function)")
+        collectionView.register(UINib(nibName: HeroCell.nibIdentifier, bundle: nil), forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
+        collectionView.register(SearchReusableView.self, forSupplementaryViewOfKind: SearchReusableView.elementKind, withReuseIdentifier: SearchReusableView.reuseIdentifier)
     }
     
 }
 
-extension SearchResultsViewController: SearchResultsViewModelSearchHandler, UISearchResultsUpdating, UISearchControllerDelegate {
+extension SearchResultsViewController: SearchResultsViewModelInformationandler, UISearchResultsUpdating, UISearchControllerDelegate {
+    
+    func willDismissSearchController(_ searchController: UISearchController) {
+        searchViewModel.resetSearchResultState()
+    }
     
     func updateSearchResults(for searchController: UISearchController) {
-        let strippedString = searchController.searchBar.text!.trimmingCharacters(in: CharacterSet.whitespaces).lowercased()
-        
-        guard !strippedString.isEmpty && strippedString != searchViewModel.currentSearchResult?.query.textInput.value else {
+        guard let text = searchController.searchBar.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty else {
             return
         }
         
-        updateSearchActivity()
-        
-        searchViewModel.debouncer.debounce {
-            self.searchViewModel.fetchCharactersWith(textInput: strippedString)
+        searchViewModel.debouncer.debounce { [unowned self] in
+            guard let searchQuery = self.searchViewModel.composeSearchQuery(with: text) else {
+                return
+            }
+            self.updateSearchActivity()
+            self.searchViewModel.fetchWithQuery(searchQuery: searchQuery)
         }
     }
     
@@ -68,10 +68,6 @@ extension SearchResultsViewController: SearchResultsViewModelSearchHandler, UISe
     func updateSearchResult(with count: Int) {
         guard let searchInformationView = searchResultInformationView else { return }
         searchInformationView.presentInformation(count: count)
-    }
-    
-    func willDismissSearchController(_ searchController: UISearchController) {
-        searchViewModel.resetSearchResultState()
     }
     
 }
@@ -104,20 +100,13 @@ extension SearchResultsViewController {
         searchViewModel.dataSource.supplementaryViewProvider = { [weak self]
             (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
             let searchResultInformation = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SearchReusableView.reuseIdentifier, for: indexPath) as! SearchReusableView
-            if let count = self?.searchViewModel.currentSearchResult?.data.count {
+            if let count = self?.searchViewModel.currentSearchResult?.total {
                 searchResultInformation.presentInformation(count: count)
             } else {
                 searchResultInformation.presentActivity()
             }
             self?.searchResultInformationView = searchResultInformation
             return searchResultInformation
-        }
-        
-        DispatchQueue.global().async {
-            self.searchViewModel.currentSnapshot = NSDiffableDataSourceSnapshot<SearchResultsViewController.Section, Character>()
-            self.searchViewModel.currentSnapshot.appendSections(SearchResultsViewController.Section.allCases)
-            self.searchViewModel.currentSnapshot.appendItems([], toSection: .results)
-            self.searchViewModel.dataSource.apply(self.searchViewModel.currentSnapshot, animatingDifferences: false)
         }
     }
     
