@@ -21,19 +21,12 @@ class ImageFetchOperation: Operation {
         
         guard !isCancelled else { return }
         
-        guard let url = URL(string: identifier) else {
+        guard let url = URL(string: identifier), let data = try? Data(contentsOf: url) else {
             return
         }
+        fetchedImage = UIImage(data: data)
         
         guard !isCancelled else { return }
-        
-        guard let imageData = try? Data(contentsOf: url) else {
-            return
-        }
-        
-        guard !isCancelled else { return }
-        
-        fetchedImage = UIImage(data: imageData)
     }
 
 }
