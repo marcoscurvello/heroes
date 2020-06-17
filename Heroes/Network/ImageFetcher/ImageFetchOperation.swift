@@ -9,7 +9,7 @@
 import UIKit
 
 class ImageFetchOperation: Operation {
-    
+
     let identifier: String
     private(set) var fetchedImage: UIImage?
 
@@ -18,13 +18,14 @@ class ImageFetchOperation: Operation {
     }
 
     override func main() {
-        
+
         guard !isCancelled else { return }
-        
+
         guard let url = URL(string: identifier), let data = try? Data(contentsOf: url) else {
             return
         }
-        
+        fetchedImage = UIImage(data: data)
+
         guard !isCancelled else { return }
 
         fetchedImage = UIImage(data: data)
