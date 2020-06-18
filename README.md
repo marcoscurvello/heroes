@@ -5,10 +5,16 @@
 
 Built using Collection View `Compositional Layouts`, `Diffable Data Sources` and `Core Data`.
 
-If you wish to run the app, simply insert a valid set of api keys in the `token.json` file included the main bundle.
-```
+![Heroes Screenshot](../assets/heroes_screenshot.png?raw=true)
+
+
+
+To run the app, specify valid api keys in the `token.json` file included in the main bundle. This is a one-off configuration run, once that's done, the keys will be stored in the keychain and the file won't be necessary.
+
+
+````
 {
     "public": "",
     "private": ""
 }
-```
+````
