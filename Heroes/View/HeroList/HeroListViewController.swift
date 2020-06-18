@@ -97,6 +97,7 @@ extension HeroListViewController {
         
         let detailViewController = HeroDetailViewController(environment: environment, imageFetcher: imageFetcher)
         detailViewController.character = selectedCharacter
+        detailViewController.state = .memory
             
         detailViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(detailViewController, animated: true)
