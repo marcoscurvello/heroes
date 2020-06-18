@@ -9,106 +9,51 @@
 import UIKit
 
 class SearchResultsViewController: UICollectionViewController {
-    
-    enum Section: CaseIterable { case results }
-    
-    let imageFetcher = ImageFetcher.shared
-    var searchViewModel: SearchResultsViewModel!
-    var searchResultInformationView: SearchReusableView!
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    init(layout: UICollectionViewLayout) {
-        super.init(collectionViewLayout: layout)
-    }
-    
+        
+    var searchResultsViewModel: SearchResultsViewModel!
+    var searchInfoView: SearchReusableView!
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        searchViewModel.infoHandler = self
-        
+        searchResultsViewModel.infoHandler = self
         configureCollectionView()
-        configureDataSource()
     }
     
     func configureCollectionView() {
         collectionView.backgroundColor = .systemBackground
-        collectionView.register(UINib(nibName: HeroCell.nibIdentifier, bundle: nil), forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
+        collectionView.register(HeroCell.self, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
         collectionView.register(SearchReusableView.self, forSupplementaryViewOfKind: SearchReusableView.elementKind, withReuseIdentifier: SearchReusableView.reuseIdentifier)
     }
-    
+
 }
 
-extension SearchResultsViewController: SearchResultsViewModelInformationandler, UISearchResultsUpdating, UISearchControllerDelegate {
-    
-    func willDismissSearchController(_ searchController: UISearchController) {
-        searchViewModel.resetSearchResultState()
-    }
+extension SearchResultsViewController: UISearchResultsUpdating, UISearchControllerDelegate {
     
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text?.trimmingCharacters(in: .whitespaces), !text.isEmpty else {
+        guard let strippedString = searchController.searchBar.text?.trimmingCharacters(in: .whitespaces), !strippedString.isEmpty else {
             return
         }
         
-        searchViewModel.debouncer.debounce { [unowned self] in
-            guard let searchQuery = self.searchViewModel.composeSearchQuery(with: text) else {
-                return
-            }
-            self.updateSearchActivity()
-            self.searchViewModel.fetchWithQuery(searchQuery: searchQuery)
-        }
+        searchResultsViewModel.performSearch(with: strippedString)
     }
     
-    func updateSearchActivity() {
-        guard let searchInformationView = searchResultInformationView else { return }
-        searchInformationView.presentActivity()
-    }
-    
-    func updateSearchResult(with count: Int) {
-        guard let searchInformationView = searchResultInformationView else { return }
-        searchInformationView.presentInformation(count: count)
+    func willDismissSearchController(_ searchController: UISearchController) {
+        searchResultsViewModel.resetSearchResultState()
     }
     
 }
 
-
-extension SearchResultsViewController {
+extension SearchResultsViewController: SearchResultsViewModelInformationandler {
     
-    private func configureDataSource() {
-        searchViewModel.dataSource = UICollectionViewDiffableDataSource<SearchResultsViewController.Section, Character>(collectionView: collectionView) { [weak imageFetcher]
-            (collectionView: UICollectionView, indexPath: IndexPath, character: Character) -> UICollectionViewCell? in
-            
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
-            let identifier = character.thumbnail!.absoluteString
-            cell.character = character
-            cell.representedIdentifier = identifier
-            
-            if let cachedImage = imageFetcher?.cachedImage(for: identifier) {
-                cell.display(image: cachedImage)
-            } else {
-                cell.display(image: nil)
-                
-                imageFetcher?.fetchAsync(identifier) { [weak cell] image in
-                    guard let theCell = cell, theCell.representedIdentifier == identifier else { return }
-                    theCell.display(image: image)
-                }
-            }
-            return cell
-        }
-        
-        searchViewModel.dataSource.supplementaryViewProvider = { [weak self]
-            (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
-            let searchResultInformation = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SearchReusableView.reuseIdentifier, for: indexPath) as! SearchReusableView
-            if let count = self?.searchViewModel.currentSearchResult?.total {
-                searchResultInformation.presentInformation(count: count)
-            } else {
-                searchResultInformation.presentActivity()
-            }
-            self?.searchResultInformationView = searchResultInformation
-            return searchResultInformation
-        }
+    func presentSearchResult(with count: Int) {
+        guard let searchInfoView = searchInfoView else { return }
+        searchInfoView.presentInformation(count: count)
+    }
+    
+    func presentSearchActivity() {
+        guard let searchInfoView = searchInfoView else { return }
+        searchInfoView.presentActivity()
     }
     
 }
-

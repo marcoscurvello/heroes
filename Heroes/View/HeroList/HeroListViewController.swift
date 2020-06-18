@@ -9,170 +9,169 @@
 import UIKit
 
 class HeroListViewController: UICollectionViewController {
+
+    private let environment: Environment!
+    private let imageFetcher: ImageFetcher!
     
-    enum Section { case main }
-    let imageFetcher = ImageFetcher.shared
-    var viewModel: HeroListViewModel!
-    var searchViewModel: SearchResultsViewModel!
-    var searchResultsController: SearchResultsViewController!
+    private var viewModel: HeroListViewModel!
+    private var searchResultsViewModel: SearchResultsViewModel!
+    private var detailViewController: HeroDetailViewController?
+
     var searchController: UISearchController!
+    var searchResultsViewController: SearchResultsViewController!
     
-    required init?(coder: NSCoder) { super.init(coder: coder) }
-    
-    init(layout: UICollectionViewLayout, viewModel: HeroListViewModel? = HeroListViewModel(), searchViewModel: SearchResultsViewModel? = SearchResultsViewModel()) {
-        super.init(collectionViewLayout: layout)
-        self.viewModel = viewModel
-        self.searchViewModel = searchViewModel
+    required init?(coder: NSCoder) {
+        self.environment = Environment(server: Server(), store: Store())
+        self.imageFetcher = ImageFetcher()
+        super.init(coder: coder)
     }
     
+    required init(environment: Environment, imageFetcher: ImageFetcher, layout: UICollectionViewLayout) {
+        self.environment = environment
+        self.imageFetcher = imageFetcher
+        super.init(collectionViewLayout: layout)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Heroes"
-        navigationController!.navigationBar.prefersLargeTitles = true
+        viewModel = HeroListViewModel(environment: environment)
+        searchResultsViewModel = SearchResultsViewModel(environment: environment)
+        defer { viewModel.requestData() }
+        
+        let dataSource = generateDataSource(for: collectionView)
+        viewModel.configureDataSource(with: dataSource)
+        viewModel.errorHandler = self
         
         configureCollectionView()
-        configureDataSource()
         configureSearch()
         
-        viewModel.errorHandler = self
-        searchViewModel.errorHandler = self
-        viewModel.fetchCharacters()
+        let searchDataSource = generateDataSource(for: searchResultsViewController.collectionView)
+        searchResultsViewModel.configureDataSource(with: searchDataSource)
+        searchResultsViewModel.errorHandler = self
     }
-    
-    func configureCollectionView() {
-        let heroCell = UINib(nibName: HeroCell.nibIdentifier, bundle: nil)
-        collectionView.register(heroCell, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
-        collectionView.register(LoaderReusableView.self, forSupplementaryViewOfKind: LoaderReusableView.elementKind, withReuseIdentifier: LoaderReusableView.reuseIdentifier)
-        collectionView.backgroundColor = .systemBackground
-    }
-    
-    func configureSearch() {
-        searchResultsController = SearchResultsViewController(layout: CollectionViewLayoutGenerator.generateLayoutForStyle(.search))
-        searchResultsController.searchViewModel = searchViewModel
-        searchResultsController.collectionView.delegate = self
-        searchResultsController.collectionView.prefetchDataSource = self
         
-        searchController = UISearchController(searchResultsController: searchResultsController)
-        searchController.searchResultsUpdater = searchResultsController
-        searchController.delegate = searchResultsController
+    func configureCollectionView() {
+        collectionView.register(HeroCell.self, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
+        collectionView.register(LoaderReusableView.self, forSupplementaryViewOfKind: LoaderReusableView.elementKind, withReuseIdentifier: LoaderReusableView.reuseIdentifier)
+    }
+        
+    func configureSearch() {
+        searchResultsViewController = SearchResultsViewController(collectionViewLayout: CollectionViewLayoutGenerator.generateLayoutForStyle(.search))
+        searchResultsViewController.searchResultsViewModel = searchResultsViewModel
+        searchResultsViewController.collectionView.delegate = self
+
+        searchController = UISearchController(searchResultsController: searchResultsViewController)
+        searchController.searchResultsUpdater = searchResultsViewController
         searchController.searchBar.autocapitalizationType = .none
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Who are your heroes?"
         
-        navigationItem.searchController = searchController
         definesPresentationContext = true
+        navigationItem.searchController = searchController
     }
     
 }
 
-extension HeroListViewController {
-    
-    private func configureDataSource() {
-        viewModel.dataSource = UICollectionViewDiffableDataSource<HeroListViewController.Section, Character>(collectionView: collectionView) {
-            (collectionView: UICollectionView, indexPath: IndexPath, character: Character) -> UICollectionViewCell? in
-            
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
-            let identifier = character.thumbnail!.absoluteString
-            cell.character = character
-            cell.representedIdentifier = identifier
-            
-            if let cachedImage = self.imageFetcher.cachedImage(for: identifier) {
-                cell.display(image: cachedImage)
-            } else {
-                cell.display(image: nil)
-                self.imageFetcher.fetchAsync(identifier) { [weak cell] image in
-                    guard let theCell = cell, theCell.representedIdentifier == identifier else { return }
-                    theCell.display(image: image)
-                }
-            }
-            return cell
-        }
-        
-        viewModel.dataSource.supplementaryViewProvider = { (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
-            if let loaderSuplementary = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoaderReusableView.reuseIdentifier, for: indexPath) as? LoaderReusableView {
-                loaderSuplementary.activityIndicator.startAnimating()
-                return loaderSuplementary
-            }
-            return nil
-        }
-        
-        viewModel.currentSnapshot = NSDiffableDataSourceSnapshot<HeroListViewController.Section, Character>()
-        viewModel.currentSnapshot.appendSections([.main])
-        viewModel.currentSnapshot.appendItems([], toSection: .main)
-    }
-    
-}
+// MARK: - UICollectionViewDelegate
 
 extension HeroListViewController {
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if collectionView == searchResultsController.collectionView {
-            if searchViewModel.currentSnapshot.numberOfItems == indexPath.item + 1 && searchViewModel.hasNextPage && searchViewModel.state == .ready {
-                searchViewModel.fetchCharactersWith(textInput: nil)
-            }
-        } else {
-            if viewModel.currentSnapshot.numberOfItems == indexPath.item + 1 && viewModel.hasNextPage && viewModel.state == .ready { viewModel.fetchCharacters() }
-        }        
+        switch collectionView {
+        case self.collectionView: viewModel.shouldFetchData(index: indexPath.item)
+        case searchResultsViewController.collectionView: searchResultsViewModel.shouldFetchData(index: indexPath.item)
+        default: return
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let navigationController = self.navigationController else { return }
+        guard let navigationController = navigationController else { return }
         
-        let character: Character!
-        if collectionView == searchResultsController.collectionView {
-            character = searchViewModel.dataSource.itemIdentifier(for: indexPath)
-        } else {
-            character = viewModel.dataSource.itemIdentifier(for: indexPath)
+        let selectedCharacter: Character!
+        
+        switch collectionView {
+        case self.collectionView: selectedCharacter = viewModel.item(for: indexPath)
+        case searchResultsViewController.collectionView: selectedCharacter = searchResultsViewModel.item(for: indexPath)
+        default: return
         }
         
-        let detailViewController = HeroDetailViewController(character: character)
+        let detailViewController = HeroDetailViewController(environment: environment, imageFetcher: imageFetcher)
+        detailViewController.character = selectedCharacter
+        detailViewController.state = .memory
+            
+        detailViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(detailViewController, animated: true)
     }
     
 }
 
-extension HeroListViewController: UICollectionViewDataSourcePrefetching {
+
+// MARK: - HeroCell Delegate
+
+extension HeroListViewController: HeroCellDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
-        for indexPath in indexPaths {
-            if collectionView == searchResultsController.collectionView, let identifier = searchViewModel.dataSource.itemIdentifier(for: indexPath)?.thumbnail {
-                imageFetcher.fetchAsync(identifier.absoluteString)
-            } else {
-                if let identifier = viewModel.dataSource.itemIdentifier(for: indexPath)?.thumbnail {
-                    imageFetcher.fetchAsync(identifier.absoluteString)
-                }
-            }
-        }
+    func heroCellFavoriteButtonTapped(cell: HeroCell) {
+        guard let character = cell.character else { return }
+        let imageData = cell.imageView.image?.toData
+        environment.store.toggleStorage(for: character, with: imageData, completion: { _ in})
     }
-    
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        for indexPath in indexPaths {
-            if collectionView == searchResultsController.collectionView, let identifier = searchViewModel.dataSource.itemIdentifier(for: indexPath)?.thumbnail {
-                imageFetcher.cancelFetch(identifier.absoluteString)
-            } else {
-                if let identifier = viewModel.dataSource.itemIdentifier(for: indexPath)?.thumbnail {
-                    imageFetcher.cancelFetch(identifier.absoluteString)
-                }
-            }
-            
-        }
-    }
-    
+
 }
+
+
+// MARK: - Error Handlers
 
 extension HeroListViewController: HeroListViewModelErrorHandler, SearchResultsViewModelErrorHandler {
     
     func viewModelDidReceiveError(error: UserFriendlyError) {
-        self.presentAlertWithMessage(message: error)
+        presentAlertWithError(message: error, callback: {_ in})
     }
     
-    func presentAlertWithMessage(message: UserFriendlyError) {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: message.title, message: message.message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Report", style: .default, handler: nil))
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true)
+}
+
+
+// MARK: - Data Source Generator
+
+extension HeroListViewController {
+    
+    public func generateDataSource(for collectionView: UICollectionView) -> HeroDataSource {
+
+        let dataSource = HeroDataSource(collectionView: collectionView, cellProvider: { [weak self] (collectionView, indexPath, character) -> UICollectionViewCell? in
+            guard let self = self else { return nil }
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
+            cell.favoriteButton.isSelected = self.environment.store.viewContext.hasPersistenceId(for: character)
+            cell.character = character
+            cell.delegate = self
+
+            guard let identifier = character.thumbnail?.absoluteString else { return cell }
+            cell.representedIdentifier = identifier
+            
+            self.imageFetcher.image(for: identifier) { [weak cell] image in
+                guard let cell = cell, cell.representedIdentifier == identifier else {
+                    return self.imageFetcher.cancelFetch(identifier)
+                }
+                cell.update(image: image)
+            }
+            return cell
+
+        })
+        
+        dataSource.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
+            switch kind {
+            case LoaderReusableView.elementKind:
+                let loaderSuplementary = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoaderReusableView.reuseIdentifier, for: indexPath) as! LoaderReusableView
+                return loaderSuplementary
+            case SearchReusableView.elementKind:
+                let searchSuplementary = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SearchReusableView.reuseIdentifier, for: indexPath) as! SearchReusableView
+                self?.searchResultsViewController.searchInfoView = searchSuplementary
+                return searchSuplementary
+            default:
+                return nil
+            }
         }
+        
+        return dataSource
     }
+    
 }

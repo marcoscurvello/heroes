@@ -11,7 +11,7 @@ import UIKit
 struct CollectionViewLayoutGenerator {
     
     enum CollectionViewStyle {
-        case paginated, search
+        case paginated, search, favorites
         
         var suplementaryViewKindForStyle: String {
             switch self {
@@ -19,6 +19,8 @@ struct CollectionViewLayoutGenerator {
                 return LoaderReusableView.elementKind
             case .search:
                 return SearchReusableView.elementKind
+            case .favorites:
+                return ""
             }
         }
         
@@ -28,6 +30,8 @@ struct CollectionViewLayoutGenerator {
                 return CGFloat(60.0)
             case .search:
                 return CGFloat(44.0)
+            case .favorites:
+                return CGFloat(43.0)
             }
         }
         
@@ -37,6 +41,8 @@ struct CollectionViewLayoutGenerator {
                 return .bottom
             case .search:
                 return .top
+            case .favorites:
+                return .none
             }
         }
     }
@@ -58,22 +64,26 @@ struct CollectionViewLayoutGenerator {
     static func generateLayoutForStyle(_ style: CollectionViewStyle) -> UICollectionViewLayout {
         
         return UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            guard let layoutKind = SectionLayoutKind(rawValue: sectionIndex) else { return nil }
+           
+            let sectionLayoutKind = SectionLayoutKind(rawValue: sectionIndex)!
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+            item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
             
-            let columns = layoutKind.columnCount(for: layoutEnvironment.container.effectiveContentSize.width)
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(130))
+            let columns = sectionLayoutKind.columnCount(for: layoutEnvironment.container.effectiveContentSize.width)
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(180))
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: columns)
             
             let section = NSCollectionLayoutSection(group: group)
             section.interGroupSpacing = 10
-            section.contentInsets = NSDirectionalEdgeInsets(top: 30, leading: 10, bottom: 0, trailing: 10)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 5, bottom: 20, trailing: 5)
             
-            let suplementaryItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(style.heightForViewKind))
-            let suplementaryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: suplementaryItemSize, elementKind: style.suplementaryViewKindForStyle, alignment: style.alignmentForViewKind)
-            section.boundarySupplementaryItems = [suplementaryItem]
+            if style != .favorites {
+                let suplementaryItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(style.heightForViewKind))
+                let suplementaryItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: suplementaryItemSize, elementKind: style.suplementaryViewKindForStyle, alignment: style.alignmentForViewKind)
+                section.boundarySupplementaryItems = [suplementaryItem]
+            }
+            
             return section
         }
     }
@@ -82,12 +92,13 @@ struct CollectionViewLayoutGenerator {
         
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             
-            let sectionLayoutKind = HeroDetailViewController.LayoutSection(rawValue: sectionIndex)!
+            let sectionLayoutKind = ResourceDataSource.LayoutSection(rawValue: sectionIndex)!
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             
             let groupWidth: NSCollectionLayoutDimension!
             let groupHeight: NSCollectionLayoutDimension!
+            
             switch sectionLayoutKind {
             case .comics:
                 groupWidth = .absolute(120)
