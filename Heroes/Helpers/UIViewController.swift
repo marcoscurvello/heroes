@@ -19,4 +19,13 @@ extension UIViewController {
         }
     }
     
+    func presentAlertWithStateChange(message: StateChangeMessage, callback: @escaping (Bool) -> ()) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: message.title, message: message.message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in callback(true) })
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in callback(false) }))
+            DispatchQueue.main.async { self.present(alert, animated: true) }
+        }
+    }
+    
 }
