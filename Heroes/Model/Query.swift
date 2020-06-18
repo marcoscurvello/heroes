@@ -46,9 +46,3 @@ extension Query {
         Query(name: "modifiedSince", value: value)
     }
 }
-
-extension Array where Element == Query {
-    func toItems() -> Array<URLQueryItem>? {
-        self.isEmpty ? nil : self.map { $0.item() }
-    }
-}
