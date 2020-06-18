@@ -10,6 +10,11 @@ import UIKit
 
 class ImageFetcher {
     
+    fileprivate let blacklistedIdentifiers: [String] = [
+        "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg",
+        "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708.gif"
+    ]
+    
     private let serialAccessQueue = OperationQueue()
     private let fetchQueue = OperationQueue()
     
@@ -21,6 +26,8 @@ class ImageFetcher {
     }
     
     func image(for identifier: String, result: @escaping (UIImage?) -> Void) {
+        guard !blacklistedIdentifiers.contains(identifier) else { return result(nil) }
+        
         if let image = cachedImage(for: identifier) {
             result(image)
         } else {
