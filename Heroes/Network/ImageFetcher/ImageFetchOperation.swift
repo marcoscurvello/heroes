@@ -24,7 +24,6 @@ class ImageFetchOperation: Operation {
         guard let url = URL(string: identifier), let data = try? Data(contentsOf: url) else {
             return
         }
-        fetchedImage = UIImage(data: data)
 
         guard !isCancelled else { return }
 
