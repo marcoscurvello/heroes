@@ -7,88 +7,109 @@
 //
 
 import Foundation
-import UIKit
 
-protocol SearchResultsViewModelDelegate: NSObject {
+protocol SearchResultsViewModelErrorHandler: NSObject {
     func viewModelDidReceiveError(error: UserFriendlyError)
 }
 
-class SearchResultsViewModel {
-    
-    enum State {
-        case ready, loading
-    }
-    
-    let server: Server!
-    let debouncer: Debouncer = Debouncer(minimumDelay: 0.5)
-    let request: CharacterRequest<Character>!
-    let requestLoader: RequestLoader<CharacterRequest<Character>>!
-    
-    var state: State = .ready
-    var currentSearchResult: SearchResult?
-    var dataSource: UICollectionViewDiffableDataSource<SearchResultsViewController.Section, Character>!
-    var currentSnapshot: NSDiffableDataSourceSnapshot<SearchResultsViewController.Section, Character>!
-    
-    weak var errorHandler: SearchResultsViewModelDelegate?
-    
-    init(server: Server? = Server.shared) {
-        self.server = server
-        self.request = try? server!.characterBaseRequest()
-        self.requestLoader = RequestLoader(request: request)
-    }
+protocol SearchResultsViewModelInformationandler: NSObject {
+    func presentSearchActivity()
+    func presentSearchResult(with count: Int)
+}
 
+class SearchResultsViewModel: NSObject {
+    
+    private enum State { case ready, loading }
+
+    private let environment: Environment!
+    private var state: State = .ready
+    
+    private let request: CharacterRequest<Character>!
+    private var requestLoader: RequestLoader<CharacterRequest<Character>>!
+    private let debouncer: Debouncer = Debouncer(minimumDelay: 0.5)
+    
+    private var currentSearchResult: SearchResult?
+    private var searchDataSource: HeroDataSource?
+    private var favoriteHeroesController: FavoriteHeroesFetchController!
+
+    weak var errorHandler: SearchResultsViewModelErrorHandler?
+    weak var infoHandler: SearchResultsViewModelInformationandler?
+    
+    // MARK: - Init
+    
+    init(environment: Environment) {
+        self.environment = environment
+        self.request = try? environment.server.characterBaseRequest()
+        super.init()
+        
+        requestLoader = RequestLoader(request: request)
+        favoriteHeroesController = FavoriteHeroesFetchController(context: environment.store.viewContext, delegate: self)
+        favoriteHeroesController.updateFetchController()
+    }
+    
+    func configureDataSource(with dataSource: HeroDataSource) {
+        searchDataSource = dataSource
+        configureDataSource()
+    }
+    
     // MARK: Pagination
     
     private let defaultPageSize = 20
-    var requestOffset: Int {
-        guard let co = currentSearchResult else {
+    private let defaultPrefetchBuffer = 1
+    
+    func requestOffsetForInput(_ text: String) -> Int {
+        guard let cs = currentSearchResult, text == cs.query.input.value else {
             return 0
         }
-        let currentOffset = Int(co.query.offset.value)!
-        let newOffset = currentOffset + defaultPageSize
-        return newOffset >= co.total ? currentOffset : newOffset
-    }
-    
-    var hasNextPage: Bool {
-        guard let co = currentSearchResult else {
-            return true
-        }
-        let currentOffset = Int(co.query.offset.value)!
-        let newOffset = currentOffset + defaultPageSize
-        return newOffset >= co.total ? false : true
-    }
         
-    struct SearchQuery: Equatable {
-        let offset: Query
-        let textInput: Query
-    }
-
-    struct SearchResult {
-        let total: Int
-        let query: SearchQuery
-        let data: [Character]
+        let currentOffset = Int(cs.query.offset.value)!
+        let newOffset = currentOffset + defaultPageSize
+        return newOffset >= cs.total ? currentOffset : newOffset
     }
     
-    func fetchCharactersWith(textInput: String?) {
+    func composeNextPageSearchQuery() -> SearchQuery? {
+        guard let csi = currentSearchResult?.query.input.value else {
+            return nil
+        }
+        let searchQuery = SearchQuery(offset: .offset("\(requestOffsetForInput(csi))"), input: .nameStartsWith(csi))
+        guard searchQuery != currentSearchResult?.query else {
+            return nil
+        }
+        return searchQuery
+    }
+    
+    func composeSearchQuery(with text: String) -> SearchQuery? {
+        guard text != currentSearchResult?.query.input.value else {
+            return nil
+        }
+        let searchQuery = SearchQuery(offset: .offset("\(requestOffsetForInput(text))"), input: .nameStartsWith(text))
+        guard searchQuery != currentSearchResult?.query else {
+            return nil
+        }
+        return searchQuery
+    }
+    
+    
+    // MARK: - Data Fetch
+    
+    func performSearch(with text: String) {
+        debouncer.debounce { [unowned self] in
+            guard let newSearchQuery = self.composeSearchQuery(with: text) else { return }
+            
+            self.infoHandler?.presentSearchActivity()
+            self.requestWithQuery(searchQuery: newSearchQuery)
+        }
+    }
+    
+    func requestWithQuery(searchQuery: SearchQuery) {
         state = .loading
         
-        var newSearchQuery: SearchQuery!
-        if let input = textInput {
-            newSearchQuery = SearchQuery(offset: .offset("0"), textInput: .nameStartsWith(input))
-        } else {
-            if let currentSearchQuery = currentSearchResult?.query.textInput.value {
-                newSearchQuery = SearchQuery(offset: .offset("\(requestOffset)"), textInput: .nameStartsWith(currentSearchQuery))
-            }
-        }
-        
-        guard newSearchQuery != currentSearchResult?.query else {
-            return state = .ready
-        }
-        
-        self.requestLoader.load(data: [newSearchQuery.offset, newSearchQuery.textInput]) { [weak self] result in
+        self.requestLoader.load(data: [searchQuery.offset, searchQuery.input]) { [weak self] result in
             switch result {
             case .success(let response):
-                self?.updateSearchResult(data: response.data, with: SearchResult(total: response.data.total, query: newSearchQuery, data: response.data.results))
+                guard let self = self else { return }
+                self.updateSearchResult(with: SearchResult(total: response.data.total, query: searchQuery), data: response.data.results)
+                
             case .failure(let error):
                 guard let self = self else { return }
                 self.state = .ready
@@ -96,43 +117,115 @@ class SearchResultsViewModel {
             }
         }
     }
+    
+    func shouldFetchData(index: Int) {
+        guard let dataSource = searchDataSource else { return }
+        let currentSnapshot = dataSource.snapshot()
         
-    func updateSearchResult(data: DataContainer<Character>, with result: SearchResult) {
-        updateSearchDataSource(result)
-        updateSearchResultsLabel(result.total)
+        guard currentSnapshot.numberOfItems == (index + defaultPrefetchBuffer) && state == .ready, let searchQuery = composeNextPageSearchQuery() else {
+            return
+        }
+        requestWithQuery(searchQuery: searchQuery)
     }
     
-    func updateSearchDataSource(_ result: SearchResult) {
-        guard !result.data.isEmpty || currentSnapshot.itemIdentifiers != result.data else { return }
+    
+    // MARK: - Data Source
+    
+    func item(for indexPath: IndexPath) -> Character? {
+        searchDataSource?.itemIdentifier(for: indexPath)
+    }
+    
+    func updateSearchResult(with result: SearchResult, data: [Character]) {
+        guard let dataSource = searchDataSource else { return }
         state = .ready
         
-        if result.query.textInput == currentSearchResult?.query.textInput && currentSnapshot != nil {
-            currentSnapshot.appendItems(result.data, toSection: .results)
-        } else {
-            currentSnapshot = NSDiffableDataSourceSnapshot<SearchResultsViewController.Section, Character>()
-            currentSnapshot.appendSections([.results])
-            currentSnapshot.appendItems(result.data)
+        var currentSnapshot = dataSource.snapshot()
+        if result.query.input == currentSearchResult?.query.input {
+            currentSnapshot.appendItems(data, toSection: .main)
+        } else if !data.isEmpty {
+            currentSnapshot = HeroSnapshot()
+            currentSnapshot.appendSections([.main])
+            currentSnapshot.appendItems(data)
         }
         
         currentSearchResult = result
-        dataSource.apply(currentSnapshot, animatingDifferences: true)
+        updateSearchResultsLabel(result.total)
+        apply(currentSnapshot)
     }
+    
+    private func reloadDataSource(with character: Character) {
+        guard let dataSource = searchDataSource else { return }
+        defer { state = .ready }
+        
+        var snapshot = dataSource.snapshot()
+        if snapshot.itemIdentifiers.contains(character) {
+            snapshot.reloadItems([character])
+            apply(snapshot)
+        }
+    }
+    
+    private func apply(_ changes: HeroSnapshot, animating: Bool = true) {
+        DispatchQueue.global().async {
+            self.searchDataSource?.apply(changes, animatingDifferences: animating)
+        }
+    }
+    
+    private func configureDataSource() {
+        var initialSnapshot = HeroSnapshot()
+        initialSnapshot.appendSections([.main])
+        initialSnapshot.appendItems([], toSection: .main)
+        apply(initialSnapshot, animating: false)
+    }
+    
+    // MARK: UI
     
     func updateSearchResultsLabel(_ count: Int? = nil) {
-        //        guard let searchResultInformationView = searchResultInformationView else { return }
-        //        searchResultInformationView.presentInformation(count: count ?? 0)
-//        delegate?.viewModelUpdateSearchResultInformation(count: count ?? 0)
+        self.infoHandler?.presentSearchResult(with: count ?? 0)
     }
-    
-    func updateSearchResultsActivity() {
-        //        guard let searchResultInformationView = searchResultInformationView else { return }
-        //        searchResultInformationView.presentActivity()
-    }
-    
+        
     func resetSearchResultState() {
         currentSearchResult = nil
-        currentSnapshot = nil
     }
     
 }
 
+// MARK: - Helper Structures
+
+extension SearchResultsViewModel {
+    
+    struct SearchQuery: Equatable {
+        let offset: Query
+        let input: Query
+    }
+    
+    struct SearchResult {
+        let total: Int
+        let query: SearchQuery
+    }
+    
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+
+import UIKit
+import CoreData
+
+extension SearchResultsViewModel: NSFetchedResultsControllerDelegate {
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith diff: CollectionDifference<NSManagedObjectID>) {
+        for change in diff {
+            switch change {
+            case .insert(_, let elementId, _):
+                if let characterObject = environment.store.viewContext.registeredObject(for: elementId) as? CharacterObject {
+                    let character = Character(managedObject: characterObject)
+                    reloadDataSource(with: character)
+                }
+            case .remove(_, let elementId, _):
+                if let characterObject = environment.store.viewContext.registeredObject(for: elementId) as? CharacterObject {
+                    let character = Character(managedObject: characterObject)
+                    reloadDataSource(with: character)
+                }
+            }
+        }
+    }
+}

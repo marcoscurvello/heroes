@@ -36,16 +36,3 @@ struct Resource: Decodable {
     let type: String?
 }
 
-struct Url: Decodable {
-    let type: String?
-    let url: String?
-}
-
-struct Image: Decodable, Hashable {
-    let path: String?
-    let `extension`: String?
-}
-
-extension Image {
-    var absoluteString: String { "\(path!).\(`extension`!)" }
-}

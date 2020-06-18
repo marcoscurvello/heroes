@@ -17,7 +17,10 @@ class ComicCell: UICollectionViewCell {
     let titleLabel = UILabel()
     let categoryLabel = UILabel()
     
-    required init?(coder: NSCoder) { super.init(coder: coder) }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -25,22 +28,25 @@ class ComicCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.imageView.image = nil
-        self.titleLabel.text = nil
-        self.categoryLabel.text = nil
+        update(image: nil)
     }
     
-    func display(image: UIImage?) {
+    public func update(image: UIImage?) {
         DispatchQueue.main.async {
-            guard let image = image else {
-                self.imageView.contentMode = .center
-                self.imageView.backgroundColor = .systemGray6
-                self.imageView.image = placeholderImage
-                return
-            }
-            self.imageView.contentMode = .scaleToFill
-            self.imageView.image = image
+            self.update(image)
         }
+    }
+    
+    private func update(_ image: UIImage?) {
+        guard let image = image else {
+            titleLabel.text = nil
+            categoryLabel.text = nil
+            imageView.contentMode = .center
+            imageView.image = placeholderResourceImage.withTintColor(.systemGray4)
+            return
+        }
+        imageView.contentMode = .scaleToFill
+        imageView.image = image
     }
     
 }
@@ -65,8 +71,14 @@ extension ComicCell {
         imageView.layer.borderColor = UIColor.black.cgColor
         imageView.layer.borderWidth = 1
         imageView.layer.cornerRadius = 4
+        imageView.backgroundColor = .systemGray6
+        
+        imageView.contentMode = .center
+        imageView.backgroundColor = .systemGray6
+        imageView.image = placeholderResourceImage
                 
         let spacing = CGFloat(10)
+        
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),

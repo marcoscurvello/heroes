@@ -15,14 +15,13 @@ class TitleSupplementaryView: UICollectionReusableView {
 
     let label = UILabel()
 
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
-    
 }
 
 extension TitleSupplementaryView {
@@ -32,14 +31,21 @@ extension TitleSupplementaryView {
         addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontForContentSizeCategory = true
-        label.font = UIFont.preferredFont(forTextStyle: .title3)
+        label.textColor = .secondaryLabel
+        
+        let titleSize = CGFloat(18.0)
+        let titleWeight: UIFont.Weight = .semibold
+        
+        if let titleDescriptor = UIFont.systemFont(ofSize: titleSize, weight: titleWeight).fontDescriptor.withDesign(.rounded) {
+            label.font = UIFont(descriptor: titleDescriptor, size: 0.0)
+        }  else {
+            label.font = .systemFont(ofSize: titleSize, weight: titleWeight)
+        }
 
         let inset = CGFloat(10)
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
-            label.topAnchor.constraint(equalTo: topAnchor, constant: inset),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset)
+            label.topAnchor.constraint(equalTo: topAnchor, constant: inset)
         ])
     }
     

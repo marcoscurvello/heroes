@@ -12,7 +12,12 @@ struct ServerKeysFromDisk: Decodable { let `private`: String; let `public`: Stri
 
 class Server {
         
-    static let shared = Server()
+    typealias Keys = (public: String, private: String)?
+    
+    enum ServerError: Error, Equatable {
+        case Unauthenticated(String)
+    }
+    
     public var baseURL: URL
     public var authenticated: Bool { _auth != nil }
     
@@ -37,11 +42,6 @@ class Server {
         _auth = nil
     }
     
-//    func authenticatedCharacterRequest(_ path: CharacterRequest.Path) throws -> CharacterRequest {
-//
-//        return CharacterRequest(baseURL, path: path, auth: parameters)
-//    }
-    
     private func authQueryItems() throws -> [Query] {
         guard let parameters = _auth?.parameters else {
             throw ServerError.Unauthenticated("Attempting to authenticate request without a valid Auth instance.")
@@ -49,29 +49,44 @@ class Server {
         return parameters
     }
     
-    /// CharacterRequest of Comics
+    /// CharacterRequest for Character
     /// - Parameter id: String identifier of character
-    /// - Returns: Authenticated request with matching Entity type
+    /// - Returns: Authenticated request with matching Character type
     func characterBaseRequest() throws -> CharacterRequest<Character> {
         return CharacterRequest(baseURL, path: .base, auth: try authQueryItems())
     }
     
+    /// CharacterRequest for Cbaracters
+    /// - Parameter id: String identifier of character
+    /// - Returns: Authenticated request with matching Character type
     func characterDetailRequest(id: String) throws -> CharacterRequest<Character> {
         return CharacterRequest(baseURL, path: .detail(id), auth: try authQueryItems())
     }
     
+    /// CharacterRequest for Comics
+    /// - Parameter id: String identifier of character
+    /// - Returns: Authenticated request with matching Comic model type
     func characterComicsRequest(id: String) throws -> CharacterRequest<Comic> {
         return CharacterRequest(baseURL, path: .comics(id), auth: try authQueryItems())
     }
     
+    /// CharacterRequest for Events
+    /// - Parameter id: String identifier of character
+    /// - Returns: Authenticated request with matching Event model type
     func characterEventsRequest(id: String) throws -> CharacterRequest<Event> {
         return CharacterRequest(baseURL, path: .events(id), auth: try authQueryItems())
     }
     
+    /// CharacterRequest for Series
+    /// - Parameter id: String identifier of character
+    /// - Returns: Authenticated request with matching Serie model type
     func characterSeriesRequest(id: String) throws -> CharacterRequest<Serie> {
         return CharacterRequest(baseURL, path: .series(id), auth: try authQueryItems())
     }
     
+    /// CharacterRequest for Stories
+    /// - Parameter id: String identifier of character
+    /// - Returns: Authenticated request with matching Storie model type
     func characterStoriesRequest(id: String) throws -> CharacterRequest<Storie> {
         return CharacterRequest(baseURL, path: .stories(id), auth: try authQueryItems())
     }
@@ -79,12 +94,6 @@ class Server {
 }
 
 extension Server {
-    
-    typealias Keys = (public: String, private: String)?
-    
-    enum ServerError: Error, Equatable {
-        case Unauthenticated(String)
-    }
 
     struct Auth {
         @HashedItem private var hash: String?

@@ -16,18 +16,20 @@ class LoaderReusableView: UICollectionReusableView {
     let containerView = UIView()
     let activityIndicator = UIActivityIndicatorView()
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
     func configure() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        activityIndicator.startAnimating()
         
         addSubview(containerView)
         containerView.addSubview(activityIndicator)

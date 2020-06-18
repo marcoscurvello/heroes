@@ -17,24 +17,35 @@ class ResourceCell: UICollectionViewCell {
     let titleLabel = UILabel()
     let categoryLabel = UILabel()
     
-    required init?(coder: NSCoder) { super.init(coder: coder) }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configure()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        update(image: nil)
+    }
     
-    func display(image: UIImage?) {
+    func update(image: UIImage?) {
         DispatchQueue.main.async {
-            guard let image = image else {
-                self.imageView.contentMode = .center
-                self.imageView.backgroundColor = .systemGray6
-                self.imageView.image = placeholderImage
-                return
-            }
-            self.imageView.contentMode = .scaleToFill
-            self.imageView.image = image
+            self.update(image)
         }
+    }
+    
+    private func update(_ image: UIImage?) {
+        guard let image = image else {
+            imageView.contentMode = .center
+            imageView.image = placeholderResourceImage.withTintColor(.systemGray4)
+            return
+        }
+        imageView.contentMode = .scaleToFill
+        imageView.image = image
     }
     
 }
@@ -42,6 +53,7 @@ class ResourceCell: UICollectionViewCell {
 extension ResourceCell {
     
     func configure() {
+        imageView.backgroundColor = .systemGray6
         imageView.contentMode = .scaleToFill
         imageView.clipsToBounds = true
         
@@ -58,8 +70,11 @@ extension ResourceCell {
         categoryLabel.font = UIFont.preferredFont(forTextStyle: .caption2)
         categoryLabel.adjustsFontForContentSizeCategory = true
         categoryLabel.textColor = .placeholderText
+        
         imageView.layer.cornerRadius = 4
-                
+        imageView.contentMode = .center
+        imageView.image = placeholderResourceImage.withTintColor(.systemGray4)
+        
         let spacing = CGFloat(10)
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
