@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CharacterObject" representedClassName=".CharacterObject" syncable="YES">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="descriptionText" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="persistenceId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="resourceURI" optional="YES" attributeType="String"/>
+        <relationship name="image" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ImageObject" inverseName="character" inverseEntity="ImageObject"/>
+    </entity>
+    <entity name="ImageObject" representedClassName=".ImageObject" syncable="YES">
+        <attribute name="data" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="path" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="character" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CharacterObject" inverseName="image" inverseEntity="CharacterObject"/>
+    </entity>
+    <elements>
+        <element name="CharacterObject" positionX="-145.7734375" positionY="105.44921875" width="121.63671875" height="148"/>
+        <element name="ImageObject" positionX="161.85546875" positionY="51.4765625" width="128" height="103"/>
+    </elements>
+</model>
