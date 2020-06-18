@@ -30,7 +30,7 @@ class SearchResultsViewModel: NSObject {
     
     private var currentSearchResult: SearchResult?
     private var searchDataSource: HeroDataSource?
-    private var favoriteHeroesController: FavoriteHeroesController!
+    private var favoriteHeroesController: FavoriteHeroesFetchController!
 
     weak var errorHandler: SearchResultsViewModelErrorHandler?
     weak var infoHandler: SearchResultsViewModelInformationandler?
@@ -43,7 +43,7 @@ class SearchResultsViewModel: NSObject {
         super.init()
         
         requestLoader = RequestLoader(request: request)
-        favoriteHeroesController = FavoriteHeroesController(store: environment.store, delegate: self)
+        favoriteHeroesController = FavoriteHeroesFetchController(context: environment.store.viewContext, delegate: self)
         favoriteHeroesController.updateFetchController()
     }
     
