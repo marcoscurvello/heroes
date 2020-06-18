@@ -56,6 +56,7 @@ class MainTabbarController: UITabBarController {
         charactersVC = HeroListViewController(environment: environment, imageFetcher: imageFetcher, layout: CollectionViewLayoutGenerator.generateLayoutForStyle(.paginated))
         
         let itemOneNavigation = UINavigationController(rootViewController: charactersVC)
+        charactersVC.navigationController?.navigationBar.tintColor = .systemPurple
         charactersVC.navigationController?.navigationBar.prefersLargeTitles = true
         charactersVC.collectionView.backgroundColor = .systemBackground
         charactersVC.title = Tab.heroes.title
@@ -72,6 +73,7 @@ class MainTabbarController: UITabBarController {
         favoritesVC = FavoritesCollectionViewController(environment: environment, layout: CollectionViewLayoutGenerator.generateLayoutForStyle(.favorites))
 
         let itemTwoNavigation = UINavigationController(rootViewController: favoritesVC)
+        favoritesVC.navigationController?.navigationBar.tintColor = .systemPurple
         favoritesVC.navigationController?.navigationBar.prefersLargeTitles = true
         favoritesVC.collectionView.backgroundColor = .systemBackground
         favoritesVC.title = Tab.favorites.title
