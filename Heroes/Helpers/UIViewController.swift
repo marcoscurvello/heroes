@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIViewController {
-    
+
     func presentAlertWithError(message: UserFriendlyError, callback: @escaping (Bool) -> Void) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: message.title, message: message.message, preferredStyle: .alert)
@@ -18,7 +18,7 @@ extension UIViewController {
             self.present(alert, animated: true)
         }
     }
-    
+
     func presentAlertWithStateChange(message: StateChangeMessage, callback: @escaping (Bool) -> ()) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: message.title, message: message.message, preferredStyle: .alert)
@@ -27,5 +27,5 @@ extension UIViewController {
             DispatchQueue.main.async { self.present(alert, animated: true) }
         }
     }
-    
+
 }
