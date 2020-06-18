@@ -8,7 +8,9 @@
 
 import UIKit
 
-var placeholderImage: UIImage = {
+let placeholderHeroImage = UIImage(named: "hero-placeholder")!
+
+let placeholderResourceImage: UIImage = {
     let configuration = UIImage.SymbolConfiguration(scale: .small)
     let image = UIImage(systemName: "person.crop.square", withConfiguration: configuration)!
     return image.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
