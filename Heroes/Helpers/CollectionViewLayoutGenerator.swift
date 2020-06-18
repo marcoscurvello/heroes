@@ -92,7 +92,7 @@ struct CollectionViewLayoutGenerator {
         
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             
-            let sectionLayoutKind = HeroDetailViewController.LayoutSection(rawValue: sectionIndex)!
+            let sectionLayoutKind = ResourceDataSource.LayoutSection(rawValue: sectionIndex)!
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             
