@@ -1,23 +1,27 @@
 //
-//  ComicCell.swift
+//  ResourceCell.swift
 //  Heroes
 //
-//  Created by Marcos Curvello on 06/06/20.
+//  Created by Marcos Curvello on 07/06/20.
 //  Copyright © 2020 Marcos Curvello. All rights reserved.
 //
 
 import UIKit
 
-class ComicCell: UICollectionViewCell {
+class ResourceCell: UICollectionViewCell {
     
-    static let reuseIdentifier = "comic-cell-reuse-identifier"
+    static let reuseIdentifier = "resource-cell-reuse-identifier"
     var representedIdentifier: String?
     
     let imageView = UIImageView()
     let titleLabel = UILabel()
     let categoryLabel = UILabel()
     
-    required init?(coder: NSCoder) { super.init(coder: coder) }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configure()
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -25,29 +29,34 @@ class ComicCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        display(image: nil)
-        titleLabel.text = nil
-        categoryLabel.text = nil
+        update(image: nil)
     }
     
-    func display(image: UIImage?) {
+    func update(image: UIImage?) {
         DispatchQueue.main.async {
-            guard let image = image else {
-                self.imageView.contentMode = .center
-                self.imageView.backgroundColor = .systemGray6
-                self.imageView.image = placeholderImage
-                return
-            }
-            self.imageView.contentMode = .scaleToFill
-            self.imageView.image = image
+            self.update(image)
         }
+    }
+    
+    private func update(_ image: UIImage?) {
+        guard let image = image else {
+            imageView.contentMode = .center
+            imageView.image = placeholderResourceImage.withTintColor(.systemGray4)
+            return
+        }
+        imageView.contentMode = .scaleToFill
+        imageView.image = image
     }
     
 }
 
-extension ComicCell {
+extension ResourceCell {
     
     func configure() {
+        imageView.backgroundColor = .systemGray6
+        imageView.contentMode = .scaleToFill
+        imageView.clipsToBounds = true
+        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         categoryLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -62,11 +71,10 @@ extension ComicCell {
         categoryLabel.adjustsFontForContentSizeCategory = true
         categoryLabel.textColor = .placeholderText
         
-        imageView.layer.borderColor = UIColor.black.cgColor
-        imageView.layer.borderWidth = 1
         imageView.layer.cornerRadius = 4
-        imageView.backgroundColor = .systemGray6
-                
+        imageView.contentMode = .center
+        imageView.image = placeholderResourceImage.withTintColor(.systemGray4)
+        
         let spacing = CGFloat(10)
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -83,5 +91,4 @@ extension ComicCell {
             categoryLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-    
 }
