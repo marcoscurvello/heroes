@@ -112,7 +112,7 @@ extension HeroListViewController: HeroCellDelegate {
     
     func heroCellFavoriteButtonTapped(cell: HeroCell) {
         guard let character = cell.character else { return }
-        let imageData = cell.imageView.image?.toData
+        let imageData = cell.imageView.image?.pngData()
         environment.store.toggleStorage(for: character, with: imageData, completion: { _ in})
     }
 
