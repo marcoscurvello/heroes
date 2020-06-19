@@ -66,7 +66,8 @@ class HeroCell: UICollectionViewCell {
             return
         }
         nameLabel.text = character.name
-        descriptionLabel.text = character.description
+        descriptionLabel.text = character.description.isEmpty ? Character.defaultDescription : character.description
+
         guard let data = character.thumbnail?.data, let image = UIImage(data: data) else { return }
         update(image: image)
     }
