@@ -162,35 +162,30 @@ extension HeroDetailViewController: HeroDetailViewModelDelegate {
         favoriteButton.isSelected = !favoriteButton.isSelected
     }
     
-    func composeStateChangeMessage() -> StateChangeMessage {
-        let characterState: Character!
+    func composeStateChangeMessage() -> StateChangeMessage? {
+        guard let character = character else { return nil}
         let message: StateChangeMessage!
         
         switch state {
-        case .memory:
-            characterState = character
-            message = .deleteCharacter(.memory, with: characterState)
-        case .persisted:
-            characterState = character
-            message = .deleteCharacter(.persisted, with: characterState)
+        case .memory: message = .deleteCharacter(.memory, with: character)
+        case .persisted: message = .deleteCharacter(.persisted, with: character)
         }
         
         return message
     }
     
     func presentPersistenceStateChangeAlert() {
-        let message = composeStateChangeMessage()
+        guard let message = composeStateChangeMessage() else { return }
         
         switch message.state {
         case .persisted:
             presentAlertWithStateChange(message: message) { [weak self] status in
                 guard status, let self = self else { return }
-                self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.toData)
+                self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
                 self.navigationController?.popViewController(animated: true)
             }
         case .memory:
-            self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.toData)
+            self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
         }
     }
-    
 }
