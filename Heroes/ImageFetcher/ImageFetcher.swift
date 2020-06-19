@@ -31,12 +31,14 @@ class ImageFetcher {
         if let image = cachedImage(for: identifier) {
             result(image)
         } else {
+
             fetchAsync(identifier) { image in
                 guard let theImage = image else {
                     return result(nil)
                 }
                 result(theImage)
             }
+
         }
     }
 
