@@ -26,7 +26,7 @@ class ImageFetcher {
     }
     
     func image(for identifier: String, result: @escaping (UIImage?) -> Void) {
-        guard !blacklistedIdentifiers.contains(identifier) else { return result(nil) }
+        guard !blacklistedIdentifiers.contains(identifier) else { return result(placeholderHeroImage) }
         
         if let image = cachedImage(for: identifier) {
             result(image)
