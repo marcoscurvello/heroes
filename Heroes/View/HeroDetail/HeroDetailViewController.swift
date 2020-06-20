@@ -86,8 +86,11 @@ class HeroDetailViewController: UIViewController {
             
             imageFetcher.image(for: identifier!) { [weak imageView] image in
                 guard let imageView = imageView else { return }
-                imageView.image = image
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
             }
+            
         }
     }
     
@@ -159,9 +162,11 @@ extension HeroDetailViewController: HeroDetailViewModelDelegate {
     
     func viewModelDidTogglePersistentence(with status: Bool) {
         guard status else { return }
-        UIView.animate(withDuration: 3.0) {
-            self.favoriteButton.isSelected = !self.favoriteButton.isSelected
-        }
+        UIView.transition(with: favoriteButton,
+        duration: 0.26,
+        options: .transitionCrossDissolve,
+        animations: { self.favoriteButton.isSelected = !self.favoriteButton.isSelected },
+        completion: nil)
     }
     
     func composeStateChangeMessage() -> StateChangeMessage? {
