@@ -83,6 +83,7 @@ class HeroCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 46.0
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.systemGray3.cgColor
+        imageView.image = placeholderHeroImage
         
         favoriteButton.addTarget(self, action: #selector(self.favoriteButtonTapped(_:)), for: .touchUpInside)
         favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
@@ -100,18 +101,15 @@ class HeroCell: UICollectionViewCell {
             nameLabel.font = .systemFont(ofSize: titleSize, weight: titleWeight)
         }
         
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.lineBreakMode = .byTruncatingTail
-        descriptionLabel.textAlignment = .left
-        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .caption2).withSize(14.0)
-        descriptionLabel.textColor = .secondaryLabel
-        
+        nameLabel.numberOfLines = 1
         nameLabel.textAlignment = .left
-        nameLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        descriptionLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         
-        imageView.image = placeholderHeroImage
-        
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .left
+        descriptionLabel.textColor = .secondaryLabel
+        descriptionLabel.lineBreakMode = .byTruncatingTail
+        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .caption2).withSize(14.0)
+
         addSubview(imageView)
         addSubview(nameLabel)
         addSubview(descriptionLabel)
@@ -129,7 +127,7 @@ class HeroCell: UICollectionViewCell {
             nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -outterSpacing),
             nameLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: -innerSpacing),
             
-            imageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: innerSpacing),
+            imageView.topAnchor.constraint(equalTo: descriptionLabel.topAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -outterSpacing),
             imageView.widthAnchor.constraint(equalToConstant: 92.0),
             imageView.heightAnchor.constraint(equalToConstant: 92.0),
@@ -137,15 +135,15 @@ class HeroCell: UICollectionViewCell {
             descriptionLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: innerSpacing),
             descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: outterSpacing),
             descriptionLabel.trailingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -innerSpacing),
-            descriptionLabel.bottomAnchor.constraint(equalTo: favoriteButton.topAnchor, constant: -innerSpacing),
+            descriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: favoriteButton.topAnchor, constant: -innerSpacing),
             
-            favoriteButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: innerSpacing),
+            favoriteButton.topAnchor.constraint(greaterThanOrEqualTo: descriptionLabel.bottomAnchor, constant: innerSpacing),
             favoriteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: outterSpacing),
             favoriteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -outterSpacing),
             favoriteButton.widthAnchor.constraint(equalToConstant: 30.0),
             favoriteButton.heightAnchor.constraint(equalToConstant: 28.0),
         ])
-        
+
     }
     
 }
