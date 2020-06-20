@@ -22,17 +22,11 @@ class HeroCell: UICollectionViewCell {
     let descriptionLabel = UILabel()
     let favoriteButton = UIButton()
 
+    weak var delegate: HeroCellDelegate?
+
     @objc func favoriteButtonTapped(_ sender: UIButton) {
         guard let delegate = delegate else { return }
         delegate.heroCellFavoriteButtonTapped(cell: self)
-    }
-
-    weak var delegate: HeroCellDelegate?
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        character = nil
-        update()
     }
 
     required init?(coder: NSCoder) {
