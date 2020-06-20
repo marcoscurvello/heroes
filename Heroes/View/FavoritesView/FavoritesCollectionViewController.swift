@@ -50,6 +50,13 @@ class FavoritesCollectionViewController: UICollectionViewController {
             cell.character = character
             cell.delegate = self
 
+            if let data = character.thumbnail?.data, let image = UIImage(data: data) {
+                cell.update(image: image)
+            } else {
+                cell.update(image: nil)
+
+            }
+
             return cell
         }
 

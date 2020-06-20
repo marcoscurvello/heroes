@@ -140,19 +140,41 @@ extension HeroListViewController {
             guard let self = self else { return nil }
 
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
-            cell.favoriteButton.isSelected = self.environment.store.viewContext.hasPersistenceId(for: character)
+
             cell.character = character
+            cell.favoriteButton.isSelected = self.environment.store.viewContext.hasPersistenceId(for: character)
             cell.delegate = self
 
-            guard let identifier = character.thumbnail?.absoluteString else { return cell }
+            guard let identifier = character.thumbnail?.absoluteString else {
+                return cell
+            }
+
             cell.representedIdentifier = identifier
+<<<<<<< HEAD
 
             self.imageFetcher.image(for: identifier) { [weak cell] image in
                 guard let cell = cell, cell.representedIdentifier == identifier else {
                     return self.imageFetcher.cancelFetch(identifier)
                 }
+=======
+
+            let image = self.imageFetcher.cachedImage(for: identifier)
+            switch image {
+            case .some(let image):
+>>>>>>> Refactor hero cell per view configuration
                 cell.update(image: image)
+            default:
+                cell.update(image: nil)
+
+                self.imageFetcher.image(for: identifier) { [weak cell] image in
+                    guard let cell = cell, cell.representedIdentifier == identifier else {
+                        self.imageFetcher.cancelFetch(identifier)
+                        return
+                    }
+                    cell.update(image: image)
+                }
             }
+
             return cell
 
         })
