@@ -16,19 +16,11 @@ class ComicCell: UICollectionViewCell {
     let imageView = UIImageView()
     let titleLabel = UILabel()
     let categoryLabel = UILabel()
-<<<<<<< HEAD:Heroes/View/Cells/ComicCell.swift
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
 
-=======
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
->>>>>>> Refactor ensure api calls on main thread:Heroes/View/HeroDetail/Cells/ComicCell.swift
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()

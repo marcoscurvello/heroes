@@ -150,18 +150,10 @@ extension HeroListViewController {
             }
 
             cell.representedIdentifier = identifier
-<<<<<<< HEAD
-
-            self.imageFetcher.image(for: identifier) { [weak cell] image in
-                guard let cell = cell, cell.representedIdentifier == identifier else {
-                    return self.imageFetcher.cancelFetch(identifier)
-                }
-=======
 
             let image = self.imageFetcher.cachedImage(for: identifier)
             switch image {
             case .some(let image):
->>>>>>> Refactor hero cell per view configuration
                 cell.update(image: image)
             default:
                 cell.update(image: nil)
