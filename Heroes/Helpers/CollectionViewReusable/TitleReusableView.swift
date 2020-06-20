@@ -31,9 +31,9 @@ extension TitleSupplementaryView {
         addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.adjustsFontForContentSizeCategory = true
-        label.textColor = .secondaryLabel
+        label.textColor = .label
         
-        let titleSize = CGFloat(18.0)
+        let titleSize = CGFloat(16.0)
         let titleWeight: UIFont.Weight = .semibold
         
         if let titleDescriptor = UIFont.systemFont(ofSize: titleSize, weight: titleWeight).fontDescriptor.withDesign(.rounded) {
