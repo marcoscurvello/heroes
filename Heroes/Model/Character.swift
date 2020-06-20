@@ -57,5 +57,5 @@ extension Character: Persistable {
 }
 
 extension Character {
-    static let defaultDescription = "No Description Availiable"
+    static let defaultDescription = "No description availiable."
 }
