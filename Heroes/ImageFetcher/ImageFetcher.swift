@@ -10,7 +10,7 @@ import UIKit
 
 class ImageFetcher {
 
-    fileprivate let blacklistedIdentifiers: [String] = [
+    fileprivate let blacklisIdentifiers: [String] = [
         "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg",
         "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708.gif"
     ]
@@ -25,28 +25,14 @@ class ImageFetcher {
         serialAccessQueue.maxConcurrentOperationCount = 1
     }
 
-    func image(for identifier: String, result: @escaping (UIImage?) -> Void) {
-        guard !blacklistedIdentifiers.contains(identifier) else { return result(nil) }
-
-        if let image = cachedImage(for: identifier) {
-            result(image)
-        } else {
-
-            fetchAsync(identifier) { image in
-                guard let theImage = image else {
-                    return result(nil)
-                }
-                result(theImage)
+    func image(for identifier: String, completion: ((UIImage?) -> Void)? = nil) {
+        guard !blacklisIdentifiers.contains(identifier) else {
+            if let completion = completion {
+                completion(placeholderHeroImage)
             }
-
+            return
         }
-    }
 
-    private func cachedImage(for identifier: String) -> UIImage? {
-        return cache.object(forKey: identifier as NSString)
-    }
-
-    private func fetchAsync(_ identifier: String, completion: ((UIImage?) -> Void)? = nil) {
         serialAccessQueue.addOperation {
             if let completion = completion {
                 let handlers = self.completionHandlers[identifier, default: []]
@@ -54,6 +40,10 @@ class ImageFetcher {
             }
             self.fetchImage(for: identifier)
         }
+    }
+
+    private func cachedImage(for identifier: String) -> UIImage? {
+        return cache.object(forKey: identifier as NSString)
     }
 
     func cancelFetch(_ identifier: String) {
@@ -74,7 +64,9 @@ class ImageFetcher {
 
         if let image = cachedImage(for: identifier) {
             invokeCompletionHandlers(for: identifier, with: image)
+
         } else {
+
             let operation = ImageFetchOperation(identifier: identifier)
             operation.completionBlock = { [weak operation] in
 
