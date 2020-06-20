@@ -9,14 +9,14 @@
 import UIKit
 
 class HeroListViewController: UICollectionViewController {
-
+    
     private let environment: Environment!
     private let imageFetcher: ImageFetcher!
     
     private var viewModel: HeroListViewModel!
     private var searchResultsViewModel: SearchResultsViewModel!
     private var detailViewController: HeroDetailViewController?
-
+    
     var searchController: UISearchController!
     var searchResultsViewController: SearchResultsViewController!
     
@@ -31,7 +31,7 @@ class HeroListViewController: UICollectionViewController {
         self.imageFetcher = imageFetcher
         super.init(collectionViewLayout: layout)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel = HeroListViewModel(environment: environment)
@@ -49,17 +49,17 @@ class HeroListViewController: UICollectionViewController {
         searchResultsViewModel.configureDataSource(with: searchDataSource)
         searchResultsViewModel.errorHandler = self
     }
-        
+    
     func configureCollectionView() {
         collectionView.register(HeroCell.self, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
         collectionView.register(LoaderReusableView.self, forSupplementaryViewOfKind: LoaderReusableView.elementKind, withReuseIdentifier: LoaderReusableView.reuseIdentifier)
     }
-        
+    
     func configureSearch() {
         searchResultsViewController = SearchResultsViewController(collectionViewLayout: CollectionViewLayoutGenerator.generateLayoutForStyle(.search))
         searchResultsViewController.searchResultsViewModel = searchResultsViewModel
         searchResultsViewController.collectionView.delegate = self
-
+        
         searchController = UISearchController(searchResultsController: searchResultsViewController)
         searchController.searchResultsUpdater = searchResultsViewController
         searchController.searchBar.autocapitalizationType = .none
@@ -98,7 +98,7 @@ extension HeroListViewController {
         let detailViewController = HeroDetailViewController(environment: environment, imageFetcher: imageFetcher)
         detailViewController.character = selectedCharacter
         detailViewController.state = .memory
-            
+        
         detailViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(detailViewController, animated: true)
     }
@@ -115,7 +115,7 @@ extension HeroListViewController: HeroCellDelegate {
         let imageData = cell.imageView.image?.pngData()
         environment.store.toggleStorage(for: character, with: imageData, completion: { _ in})
     }
-
+    
 }
 
 
@@ -135,26 +135,40 @@ extension HeroListViewController: HeroListViewModelErrorHandler, SearchResultsVi
 extension HeroListViewController {
     
     public func generateDataSource(for collectionView: UICollectionView) -> HeroDataSource {
-
+        
         let dataSource = HeroDataSource(collectionView: collectionView, cellProvider: { [weak self] (collectionView, indexPath, character) -> UICollectionViewCell? in
             guard let self = self else { return nil }
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
-            cell.favoriteButton.isSelected = self.environment.store.viewContext.hasPersistenceId(for: character)
+            
             cell.character = character
+            cell.favoriteButton.isSelected = self.environment.store.viewContext.hasPersistenceId(for: character)
             cell.delegate = self
-
-            guard let identifier = character.thumbnail?.absoluteString else { return cell }
+            
+            guard let identifier = character.thumbnail?.absoluteString else {
+                return cell
+            }
+            
             cell.representedIdentifier = identifier
             
-            self.imageFetcher.image(for: identifier) { [weak cell] image in
-                guard let cell = cell, cell.representedIdentifier == identifier else {
-                    return self.imageFetcher.cancelFetch(identifier)
-                }
+            let image = self.imageFetcher.cachedImage(for: identifier)
+            switch image {
+            case .some(let image):
                 cell.update(image: image)
+            default:
+                cell.update(image: nil)
+                
+                self.imageFetcher.image(for: identifier) { [weak cell] image in
+                    guard let cell = cell, cell.representedIdentifier == identifier else {
+                        self.imageFetcher.cancelFetch(identifier)
+                        return
+                    }
+                    cell.update(image: image)
+                }
             }
+            
             return cell
-
+            
         })
         
         dataSource.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in

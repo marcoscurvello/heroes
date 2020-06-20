@@ -10,10 +10,10 @@ import UIKit
 import CoreData
 
 class FavoritesCollectionViewController: UICollectionViewController {
-            
+    
     private let environment: Environment!
     private let favoritesViewModel: FavoritesViewControllerModel!
-
+    
     required init?(coder: NSCoder) {
         self.environment = Environment(server: Server(), store: Store())
         self.favoritesViewModel = FavoritesViewControllerModel(environment: environment)
@@ -25,7 +25,7 @@ class FavoritesCollectionViewController: UICollectionViewController {
         self.favoritesViewModel = FavoritesViewControllerModel(environment: environment)
         super.init(collectionViewLayout: layout)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,20 +39,27 @@ class FavoritesCollectionViewController: UICollectionViewController {
         collectionView.backgroundColor = .systemBackground
         collectionView.register(HeroCell.self, forCellWithReuseIdentifier: HeroCell.reuseIdentifier)
     }
-
+    
     func generateDataSource() -> HeroDataSource {
         
         let dataSource = HeroDataSource(collectionView: collectionView) { [weak self] (collectionView, indexPath, character) -> UICollectionViewCell?  in
             guard let self = self else { return nil }
-                        
+            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
             cell.favoriteButton.isSelected = self.environment.store.viewContext.hasPersistenceId(for: character)
             cell.character = character
             cell.delegate = self
-                    
+                        
+            if let data = character.thumbnail?.data, let image = UIImage(data: data) {
+                cell.update(image: image)
+            } else {
+                cell.update(image: nil)
+                
+            }
+            
             return cell
         }
-
+        
         return dataSource
     }
     
