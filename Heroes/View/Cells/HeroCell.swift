@@ -56,18 +56,17 @@ class HeroCell: UICollectionViewCell {
         guard let character = character else {
             nameLabel.text = nil
             descriptionLabel.text = nil
-            imageView.image = placeholderHeroImage
             return
         }
+        
         nameLabel.text = character.name
         descriptionLabel.text = character.description.isEmpty ? Character.defaultDescription : character.description
-
-        guard let data = character.thumbnail?.data, let image = UIImage(data: data) else { return }
-        update(image: image)
     }
     
     private func update(_ image: UIImage?) {
-        guard let image = image, image != imageView.image else { return }
+        guard let image = image else {
+            return imageView.image = placeholderHeroImage
+          }
         imageView.image = image
     }
     
@@ -83,7 +82,6 @@ class HeroCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 46.0
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.systemGray3.cgColor
-        imageView.image = placeholderHeroImage
         
         favoriteButton.addTarget(self, action: #selector(self.favoriteButtonTapped(_:)), for: .touchUpInside)
         favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
