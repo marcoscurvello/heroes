@@ -24,11 +24,11 @@ class ImageFetcher {
     init() {
         serialAccessQueue.maxConcurrentOperationCount = 1
     }
-
+    
     func image(for identifier: String, completion: ((UIImage?) -> Void)? = nil) {
         guard !blacklisIdentifiers.contains(identifier) else {
             if let completion = completion {
-                completion(placeholderHeroImage)
+                completion(nil)
             }
             return
         }
@@ -38,11 +38,11 @@ class ImageFetcher {
                 let handlers = self.completionHandlers[identifier, default: []]
                 self.completionHandlers[identifier] = handlers + [completion]
             }
-            self.fetchImage(for: identifier)
+            self.fetchData(for: identifier)
         }
     }
 
-    private func cachedImage(for identifier: String) -> UIImage? {
+    func cachedImage(for identifier: String) -> UIImage? {
         return cache.object(forKey: identifier as NSString)
     }
     
@@ -57,7 +57,7 @@ class ImageFetcher {
         }
     }
     
-    private func fetchImage(for identifier: String) {
+    func fetchData(for identifier: String) {
         guard operation(for: identifier) == nil else {
             return
         }
