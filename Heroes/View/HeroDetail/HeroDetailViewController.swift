@@ -75,7 +75,7 @@ class HeroDetailViewController: UIViewController {
     
     func present(with character: Character) {
         nameLabel.text = character.name
-        descriptionLabel.text = character.description
+        descriptionLabel.text = character.description.isEmpty ? Character.defaultDescription : character.description
         favoriteButton.isSelected = environment.store.viewContext.hasPersistenceId(for: character)
         
         if let data = character.thumbnail?.data, let image = UIImage(data: data) {
@@ -86,8 +86,11 @@ class HeroDetailViewController: UIViewController {
             
             imageFetcher.image(for: identifier!) { [weak imageView] image in
                 guard let imageView = imageView else { return }
-                imageView.image = image
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
             }
+            
         }
     }
     
@@ -159,38 +162,37 @@ extension HeroDetailViewController: HeroDetailViewModelDelegate {
     
     func viewModelDidTogglePersistentence(with status: Bool) {
         guard status else { return }
-        favoriteButton.isSelected = !favoriteButton.isSelected
+        UIView.transition(with: favoriteButton,
+        duration: 0.26,
+        options: .transitionCrossDissolve,
+        animations: { self.favoriteButton.isSelected = !self.favoriteButton.isSelected },
+        completion: nil)
     }
     
-    func composeStateChangeMessage() -> StateChangeMessage {
-        let characterState: Character!
+    func composeStateChangeMessage() -> StateChangeMessage? {
+        guard let character = character else { return nil}
         let message: StateChangeMessage!
         
         switch state {
-        case .memory:
-            characterState = character
-            message = .deleteCharacter(.memory, with: characterState)
-        case .persisted:
-            characterState = character
-            message = .deleteCharacter(.persisted, with: characterState)
+        case .memory: message = .deleteCharacter(.memory, with: character)
+        case .persisted: message = .deleteCharacter(.persisted, with: character)
         }
         
         return message
     }
     
     func presentPersistenceStateChangeAlert() {
-        let message = composeStateChangeMessage()
+        guard let message = composeStateChangeMessage() else { return }
         
         switch message.state {
         case .persisted:
             presentAlertWithStateChange(message: message) { [weak self] status in
                 guard status, let self = self else { return }
-                self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.toData)
+                self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
                 self.navigationController?.popViewController(animated: true)
             }
         case .memory:
-            self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.toData)
+            self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
         }
     }
-    
 }

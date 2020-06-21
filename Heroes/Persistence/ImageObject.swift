@@ -7,17 +7,7 @@
 //
 //
 
-import UIKit
 import CoreData
-
-extension UIImage {
-    
-    var toData: Data? {
-        return pngData()
-    }
-    
-}
-
 
 public class ImageObject: NSManagedObject {
     
@@ -52,7 +42,6 @@ extension ImageObject {
         imageObject.path = image.path
         imageObject.type = image.extension
         imageObject.data = data
-        
         return imageObject
     }
 }

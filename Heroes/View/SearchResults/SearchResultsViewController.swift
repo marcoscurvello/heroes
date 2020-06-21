@@ -37,45 +37,9 @@ extension SearchResultsViewController: UISearchResultsUpdating, UISearchControll
 
         searchResultsViewModel.performSearch(with: strippedString)
     }
-
+    
     func willDismissSearchController(_ searchController: UISearchController) {
         searchResultsViewModel.resetSearchResultState()
-    }
-
-    deinit {
-        print("\(type(of: self)): \(#function)")
-    }
-
-}
-
-extension SearchResultsViewController: SearchResultsViewModelSearchHandler, UISearchResultsUpdating, UISearchControllerDelegate {
-
-    func updateSearchResults(for searchController: UISearchController) {
-        let strippedString = searchController.searchBar.text!.trimmingCharacters(in: CharacterSet.whitespaces).lowercased()
-
-        guard !strippedString.isEmpty && strippedString != searchViewModel.currentSearchResult?.query.textInput.value else {
-            return
-        }
-
-        updateSearchActivity()
-
-        searchViewModel.debouncer.debounce {
-            self.searchViewModel.fetchCharactersWith(textInput: strippedString)
-        }
-    }
-
-    func updateSearchActivity() {
-        guard let searchInformationView = searchResultInformationView else { return }
-        searchInformationView.presentActivity()
-    }
-
-    func updateSearchResult(with count: Int) {
-        guard let searchInformationView = searchResultInformationView else { return }
-        searchInformationView.presentInformation(count: count)
-    }
-
-    func willDismissSearchController(_ searchController: UISearchController) {
-        searchViewModel.resetSearchResultState()
     }
 
 }

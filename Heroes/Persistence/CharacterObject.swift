@@ -52,29 +52,8 @@ extension CharacterObject {
                 return
             }
             context.delete(persistedCharacter)
-            
         } catch {
             throw error
-        }
-    }
-    
-}
-
-extension NSManagedObjectContext {
-    
-    func hasPersistenceId(for character: Character) -> Bool {
-        let request: NSFetchRequest<CharacterObject> = CharacterObject.fetchRequest()
-        request.predicate = NSPredicate(format: "id = %ld", Int64(character.id))
-        request.propertiesToFetch = ["id"]
-        
-        do {
-            let match = try self.fetch(request)
-            guard let _ = match.first else {
-                return false
-            }
-            return true
-        } catch {
-            return false
         }
     }
     

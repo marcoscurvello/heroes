@@ -11,9 +11,13 @@ import Foundation
 struct Image: Decodable, Hashable {
     let path: String?
     let `extension`: String?
-    let data: Data?
+    var data: Data?
 }
 
 extension Image {
     var absoluteString: String { "\(path!).\(`extension`!)" }
+    
+    mutating func set(image data: Data?) {
+        self.data = data
+    }
 }

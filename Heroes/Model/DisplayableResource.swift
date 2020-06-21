@@ -23,6 +23,6 @@ struct DisplayableResource {
 
 extension DisplayableResource: Hashable {
     static func == (lhs: DisplayableResource, rhs: DisplayableResource) -> Bool {
-        lhs.id == rhs.id && lhs.title == rhs.title
+        lhs.type == rhs.type && lhs.id == rhs.id
     }
 }

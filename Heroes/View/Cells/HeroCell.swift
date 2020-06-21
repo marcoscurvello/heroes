@@ -22,17 +22,11 @@ class HeroCell: UICollectionViewCell {
     let descriptionLabel = UILabel()
     let favoriteButton = UIButton()
 
+    weak var delegate: HeroCellDelegate?
+
     @objc func favoriteButtonTapped(_ sender: UIButton) {
         guard let delegate = delegate else { return }
         delegate.heroCellFavoriteButtonTapped(cell: self)
-    }
-
-    weak var delegate: HeroCellDelegate?
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        character = nil
-        update()
     }
 
     required init?(coder: NSCoder) {
@@ -62,17 +56,17 @@ class HeroCell: UICollectionViewCell {
         guard let character = character else {
             nameLabel.text = nil
             descriptionLabel.text = nil
-            imageView.image = placeholderHeroImage
             return
         }
+
         nameLabel.text = character.name
-        descriptionLabel.text = character.description
-        guard let data = character.thumbnail?.data, let image = UIImage(data: data) else { return }
-        update(image: image)
+        descriptionLabel.text = character.description.isEmpty ? Character.defaultDescription : character.description
     }
 
     private func update(_ image: UIImage?) {
-        guard let image = image, image != imageView.image else { return }
+        guard let image = image else {
+            return imageView.image = placeholderHeroImage
+          }
         imageView.image = image
     }
 
@@ -105,17 +99,14 @@ class HeroCell: UICollectionViewCell {
             nameLabel.font = .systemFont(ofSize: titleSize, weight: titleWeight)
         }
 
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.lineBreakMode = .byTruncatingTail
-        descriptionLabel.textAlignment = .left
-        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .caption2).withSize(14.0)
-        descriptionLabel.textColor = .secondaryLabel
-
+        nameLabel.numberOfLines = 1
         nameLabel.textAlignment = .left
-        nameLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        descriptionLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
-        imageView.image = placeholderHeroImage
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .left
+        descriptionLabel.textColor = .secondaryLabel
+        descriptionLabel.lineBreakMode = .byTruncatingTail
+        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .caption2).withSize(14.0)
 
         addSubview(imageView)
         addSubview(nameLabel)
@@ -134,7 +125,7 @@ class HeroCell: UICollectionViewCell {
             nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -outterSpacing),
             nameLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: -innerSpacing),
 
-            imageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: innerSpacing),
+            imageView.topAnchor.constraint(equalTo: descriptionLabel.topAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -outterSpacing),
             imageView.widthAnchor.constraint(equalToConstant: 92.0),
             imageView.heightAnchor.constraint(equalToConstant: 92.0),
@@ -142,9 +133,9 @@ class HeroCell: UICollectionViewCell {
             descriptionLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: innerSpacing),
             descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: outterSpacing),
             descriptionLabel.trailingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -innerSpacing),
-            descriptionLabel.bottomAnchor.constraint(equalTo: favoriteButton.topAnchor, constant: -innerSpacing),
+            descriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: favoriteButton.topAnchor, constant: -innerSpacing),
 
-            favoriteButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: innerSpacing),
+            favoriteButton.topAnchor.constraint(greaterThanOrEqualTo: descriptionLabel.bottomAnchor, constant: innerSpacing),
             favoriteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: outterSpacing),
             favoriteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -outterSpacing),
             favoriteButton.widthAnchor.constraint(equalToConstant: 30.0),
