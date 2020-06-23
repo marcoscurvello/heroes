@@ -150,8 +150,6 @@ extension HeroDetailViewController: HeroDetailViewModelDelegate {
 extension HeroDetailViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        guard let navigationController = navigationController else { return }
-//        navigationController.pushViewController(resourceDetailViewController, animated: true)
         
         let resource = detailViewModel.dataSource?.itemIdentifier(for: indexPath)
         
