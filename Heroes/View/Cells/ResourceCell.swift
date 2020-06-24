@@ -25,6 +25,11 @@ class ResourceCell: UICollectionViewCell {
         super.init(frame: frame)
         configure()
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        update(nil)
+    }
         
     func update(image: UIImage?) {
         DispatchQueue.main.async {
