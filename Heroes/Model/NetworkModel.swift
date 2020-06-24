@@ -31,8 +31,8 @@ struct ResourceList: Decodable {
 }
 
 struct Resource: Decodable, Equatable {
-    let resourceURI: String?
-    let name: String?
+    let resourceURI: String
+    let name: String
     let type: String?
 }
 

@@ -34,35 +34,33 @@ struct Comic: Decodable {
     let characters: ResourceList?
 }
 
+extension Comic: Hashable, Equatable {
+    
+    static func == (lhs: Comic, rhs: Comic) -> Bool {
+        lhs.id == rhs.id && lhs.title == rhs.title
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(title)
+    }
+    
+}
+
+extension Comic: Displayable {
+    
+    func convert(type: Comic) -> DisplayableResource {
+        DisplayableResource(type: .comic, id: id, title: title, description: description, thumbnail: thumbnail)
+    }
+    
+}
+
+// MARK: - Text
+
 struct Text: Decodable {
     let type: String
     let language: String
     let text: String
 }
 
-struct DateContainer: Decodable {
-    let type: String
-    let date: String
-}
 
-struct Price: Decodable {
-    let type: String
-    let price: Double
-}
-
-extension Comic: Hashable, Equatable {
-    static func == (lhs: Comic, rhs: Comic) -> Bool {
-        lhs.id == rhs.id && lhs.digitalId == rhs.digitalId && lhs.title == rhs.title
-    }
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(digitalId)
-        hasher.combine(title)
-    }
-}
-
-extension Comic: Displayable {
-    func convert(type: Comic) -> DisplayableResource {
-        DisplayableResource(type: .comic, id: id, title: title, description: description, thumbnail: thumbnail)
-    }
-}
