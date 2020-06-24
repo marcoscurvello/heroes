@@ -60,7 +60,7 @@ class HeroCell: UICollectionViewCell {
         }
 
         nameLabel.text = character.name
-        descriptionLabel.text = character.description.isEmpty ? Character.defaultDescription : character.description
+        descriptionLabel.text = character.description.isEmpty ? unavailableDescription : character.description
     }
 
     private func update(_ image: UIImage?) {
@@ -78,7 +78,7 @@ class HeroCell: UICollectionViewCell {
 
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleToFill
-        imageView.backgroundColor = .systemGray6
+        imageView.backgroundColor = Theme.colors.imageViewBackgroundColor
         imageView.layer.cornerRadius = 46.0
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.systemGray3.cgColor
@@ -90,15 +90,7 @@ class HeroCell: UICollectionViewCell {
         favoriteButton.contentHorizontalAlignment = .fill
         favoriteButton.contentVerticalAlignment = .fill
 
-        let titleSize = CGFloat(18.0)
-        let titleWeight: UIFont.Weight = .semibold
-
-        if let titleDescriptor = UIFont.systemFont(ofSize: titleSize, weight: titleWeight).fontDescriptor.withDesign(.rounded) {
-            nameLabel.font = UIFont(descriptor: titleDescriptor, size: 0.0)
-        }  else {
-            nameLabel.font = .systemFont(ofSize: titleSize, weight: titleWeight)
-        }
-
+        nameLabel.font = Theme.fonts.titleFont
         nameLabel.numberOfLines = 1
         nameLabel.textAlignment = .left
 
@@ -106,7 +98,7 @@ class HeroCell: UICollectionViewCell {
         descriptionLabel.textAlignment = .left
         descriptionLabel.textColor = .secondaryLabel
         descriptionLabel.lineBreakMode = .byTruncatingTail
-        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .caption2).withSize(14.0)
+        descriptionLabel.font = Theme.fonts.descriptionFont
 
         addSubview(imageView)
         addSubview(nameLabel)
