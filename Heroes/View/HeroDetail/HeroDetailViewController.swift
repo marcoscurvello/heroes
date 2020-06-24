@@ -13,7 +13,7 @@ class HeroDetailViewController: UIViewController {
     static let nibIdentifier = "HeroDetailViewController"
     
     var character: Character?
-
+    
     private let environment: Environment!
     private let imageFetcher: ImageFetcher?
     private var detailViewModel: HeroDetailViewModel!
@@ -55,7 +55,7 @@ class HeroDetailViewController: UIViewController {
         let dataSource = configureDataSource()
         detailViewModel.dataSource = dataSource
         detailViewModel.character = character
-  
+        
         guard let character = character else { return }
         present(with: character)
     }
@@ -63,24 +63,22 @@ class HeroDetailViewController: UIViewController {
     func configureCollectionView() {
         resourcesCollectionView.delegate = self
         resourcesCollectionView.setCollectionViewLayout(CollectionViewLayoutGenerator.resourcesCollectionViewLayout(), animated: false)
-        resourcesCollectionView.register(ComicCell.self, forCellWithReuseIdentifier: ComicCell.reuseIdentifier)
         resourcesCollectionView.register(ResourceCell.self, forCellWithReuseIdentifier: ResourceCell.reuseIdentifier)
         resourcesCollectionView.register(TitleSupplementaryView.self, forSupplementaryViewOfKind: TitleSupplementaryView.elementKind, withReuseIdentifier: TitleSupplementaryView.reuseIdentifier)
     }
     
     func present(with character: Character) {
         nameLabel.text = character.name
-        descriptionLabel.text = character.description.isEmpty ? Character.defaultDescription : character.description
+        descriptionLabel.text = character.description.isEmpty ? unavailableDescription : character.description
         favoriteButton.isSelected = environment.store.viewContext.hasPersistenceId(for: character)
         
         if let data = character.thumbnail?.data, let image = UIImage(data: data) {
             imageView.image = image
         } else {
-            guard let imageFetcher = imageFetcher else { return }
-            let identifier = character.thumbnail?.absoluteString
             
-            imageFetcher.image(for: identifier!) { [weak imageView] image in
-                guard let imageView = imageView else { return }
+            guard let imageFetcher = imageFetcher, let identifier = character.thumbnail?.absoluteString else { return }
+            imageFetcher.image(for: identifier) { [weak imageView] image in
+                guard let imageView = imageView, let image = image else { return }
                 DispatchQueue.main.async {
                     imageView.image = image
                 }
@@ -91,18 +89,10 @@ class HeroDetailViewController: UIViewController {
     func configureLabels() {
         nameLabel.adjustsFontForContentSizeCategory = true
         descriptionLabel.adjustsFontForContentSizeCategory = true
-
-        descriptionLabel.textColor = .secondaryLabel
-        descriptionLabel.font = UIFont.preferredFont(forTextStyle: .caption2).withSize(14.0)
         
-        let titleSize = CGFloat(20.0)
-        let titleWeight: UIFont.Weight = .semibold
-        
-        if let titleDescriptor = UIFont.systemFont(ofSize: titleSize, weight: titleWeight).fontDescriptor.withDesign(.rounded) {
-            nameLabel.font = UIFont(descriptor: titleDescriptor, size: 0.0)
-        } else {
-            nameLabel.font = .systemFont(ofSize: titleSize, weight: titleWeight)
-        }
+        nameLabel.font = Theme.fonts.titleFont
+        descriptionLabel.textColor = Theme.colors.secondaryLabelColor
+        descriptionLabel.font = Theme.fonts.descriptionFont
     }
     
 }
@@ -120,28 +110,29 @@ extension HeroDetailViewController: HeroDetailViewModelDelegate {
     
     func animateFavoriteButtonSelection() {
         UIView.transition(with: favoriteButton,
-        duration: 0.26,
-        options: .transitionCrossDissolve,
-        animations: { self.favoriteButton.isSelected = !self.favoriteButton.isSelected },
-        completion: nil)
+                          duration: 0.26,
+                          options: .transitionCrossDissolve,
+                          animations: { self.favoriteButton.isSelected = !self.favoriteButton.isSelected },
+                          completion: nil)
     }
     
     func presentPersistenceStateChangeAlert() {
         guard let message = detailViewModel.composeStateChangeMessage() else { return }
         
         switch message.state {
-        case .persisted:
-            presentAlertWithStateChange(message: message) { [weak self] status in
-                guard status, let self = self else { return }
-                
-                self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
-                self.navigationController?.popViewController(animated: true)
+            case .persisted:
+                presentAlertWithStateChange(message: message) { [weak self] status in
+                    guard status, let self = self else { return }
+                    
+                    self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
+                    self.navigationController?.popViewController(animated: true)
             }
-        case .memory:
-            self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
+            case .memory:
+                self.detailViewModel.toggleCharacterPersistenceState(with: message, data: self.imageView.image?.pngData())
         }
         
     }
+    
 }
 
 
@@ -153,13 +144,21 @@ extension HeroDetailViewController: UICollectionViewDelegate {
         
         let resource = detailViewModel.dataSource?.itemIdentifier(for: indexPath)
         
-        let resourceDetailViewController = ComicDetailViewController()
-        resourceDetailViewController.resource = resource
-        resourceDetailViewController.environment = environment
-        resourceDetailViewController.imageFetcher = imageFetcher
-    
-        let navController = UINavigationController(rootViewController: resourceDetailViewController)
-        present(navController, animated: true)
+        switch resource?.type {
+            case .comic:
+                let resourceDetailViewController = ComicDetailViewController()
+                resourceDetailViewController.resource = resource
+                resourceDetailViewController.environment = environment
+                resourceDetailViewController.imageFetcher = imageFetcher
+                
+                let navController = UINavigationController(rootViewController: resourceDetailViewController)
+                present(navController, animated: true)
+            
+            default:
+                return
+        }
+        
+        
     }
     
     private func configureDataSource() -> ResourceDataSource {
@@ -170,21 +169,27 @@ extension HeroDetailViewController: UICollectionViewDelegate {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ResourceCell.reuseIdentifier, for: indexPath) as! ResourceCell
             cell.titleLabel.text = resource.title
-                        
+            
             guard let identifier = resource.thumbnail?.absoluteString else {
-                cell.update(image: nil)
                 return cell
             }
             
             cell.representedIdentifier = identifier
+            let image = self.imageFetcher?.cachedImage(for: identifier)
             
-            self.imageFetcher?.image(for: identifier) { [weak self] image in
-                guard cell.representedIdentifier == identifier else {
-                    self?.imageFetcher?.cancelFetch(identifier)
-                    return
-                }
+            switch image {
+                case .some(let image): cell.update(image: image)
                 
-                cell.update(image: image)
+                default:
+                    cell.update(image: nil)
+                    self.imageFetcher?.image(for: identifier) { [weak self] image in
+                        
+                        guard cell.representedIdentifier == identifier, let image = image else {
+                            self?.imageFetcher?.cancelFetch(identifier)
+                            return
+                        }
+                        cell.update(image: image)
+                }
             }
             
             return cell
