@@ -49,6 +49,8 @@ class Server {
         return parameters
     }
     
+    // MARK: - Character Requests
+    
     /// CharacterRequest for Character
     /// - Parameter id: String identifier of character
     /// - Returns: Authenticated request with matching Character type
@@ -89,6 +91,25 @@ class Server {
     /// - Returns: Authenticated request with matching Storie model type
     func characterStoriesRequest(id: String) throws -> CharacterRequest<Storie> {
         return CharacterRequest(baseURL, path: .stories(id), auth: try authQueryItems())
+    }
+    
+
+    // MARK: - Resource Requests
+    
+    func resourceComicRequest(id: String) throws -> ResourceRequest<Comic> {
+        return ResourceRequest(baseURL, path: .comic(id), auth: try authQueryItems())
+    }
+    
+    func resourceSerieRequest(id: String) throws -> ResourceRequest<Serie> {
+        return ResourceRequest(baseURL, path: .serie(id), auth: try authQueryItems())
+    }
+    
+    func resourceStorieRequest(id: String) throws -> ResourceRequest<Storie> {
+        return ResourceRequest(baseURL, path: .storie(id), auth: try authQueryItems())
+    }
+    
+    func resourceEventRequest(id: String) throws -> ResourceRequest<Event> {
+        return ResourceRequest(baseURL, path: .event(id), auth: try authQueryItems())
     }
     
 }
