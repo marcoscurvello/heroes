@@ -199,7 +199,7 @@ extension HeroDetailViewController: UICollectionViewDelegate {
             (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
             let titleSupplementary = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TitleSupplementaryView.reuseIdentifier, for: indexPath) as! TitleSupplementaryView
             
-            let section = ResourceDataSource.Section(rawValue: indexPath.section)!
+            let section = CollectionViewLayoutGenerator.ResourceSection(rawValue: indexPath.section)!
             titleSupplementary.label.text = section.sectionTitle
             
             return titleSupplementary

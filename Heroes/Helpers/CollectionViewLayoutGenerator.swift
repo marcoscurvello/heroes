@@ -68,7 +68,8 @@ struct CollectionViewLayoutGenerator {
             let sectionLayoutKind = SectionLayoutKind(rawValue: sectionIndex)!
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
+            let itemInsets = NSDirectionalEdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10)
+            item.contentInsets = itemInsets
             
             let columns = sectionLayoutKind.columnCount(for: layoutEnvironment.container.effectiveContentSize.width)
             let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(180))
@@ -88,27 +89,51 @@ struct CollectionViewLayoutGenerator {
         }
     }
     
+    // MARK: - Resource CollectionView
+    
+    enum ResourceSection: Int, CaseIterable {
+        case comics, stories, events, series
+        
+        var sectionTitle: String {
+            switch self {
+                case .comics: return "Comics"
+                case .stories: return "Stories"
+                case .events: return "Events"
+                case .series: return "Series"
+            }
+        }
+        
+        func columnCount(for width: CGFloat) -> Int {
+            let wideMode = width > 800
+            let narrowMode = width < 420
+            
+            switch self {
+                case .comics, .stories, .events, .series:
+                    return wideMode ? 3 : narrowMode ? 1 : 2
+            }
+        }
+        
+        var groupSize: (width: NSCollectionLayoutDimension, height: NSCollectionLayoutDimension) {
+            switch self {
+                case .comics: return (width: .absolute(138), height: .absolute(221))
+                case .events: return (width: .fractionalWidth(0.40), height: .fractionalHeight(0.18))
+                case .series: return (width: .fractionalWidth(0.40), height: .fractionalHeight(0.18))
+                case .stories: return (width: .fractionalWidth(0.40), height: .fractionalHeight(0.18))
+            }
+        }
+    }
+    
+    
     static func resourcesCollectionViewLayout() -> UICollectionViewLayout {
         
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             
-            let sectionLayoutKind = ResourceDataSource.LayoutSection(rawValue: sectionIndex)!
+            let sectionLayoutKind = ResourceSection(rawValue: sectionIndex)!
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
-            let groupWidth: NSCollectionLayoutDimension!
-            let groupHeight: NSCollectionLayoutDimension!
-            
-            switch sectionLayoutKind {
-            case .comics:
-                groupWidth = .absolute(120)
-                groupHeight = .absolute(200)
-            case .stories, .events, .series:
-                groupWidth = .fractionalWidth(0.40)
-                groupHeight = .fractionalHeight(0.18)
-            }
-            
-            let groupSize = NSCollectionLayoutSize(widthDimension: groupWidth, heightDimension: groupHeight)
+
+            let sectionGroupSize = sectionLayoutKind.groupSize
+            let groupSize = NSCollectionLayoutSize(widthDimension: sectionGroupSize.width, heightDimension: sectionGroupSize.height)
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
             
             let section = NSCollectionLayoutSection(group: group)
