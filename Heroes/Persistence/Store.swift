@@ -31,14 +31,15 @@ final class Store {
     lazy var backgroundContext: NSManagedObjectContext = {
         let context = container.newBackgroundContext()
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.automaticallyMergesChangesFromParent = true
         context.undoManager = nil
         return context
     }()
     
     lazy var viewContext: NSManagedObjectContext = {
         let context = container.viewContext
-        context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.automaticallyMergesChangesFromParent = true
         context.undoManager = nil
         return context
     }()
@@ -72,19 +73,19 @@ final class Store {
                     try CharacterObject.deleteCharacter(with: character, in: context)
                 }
                 else {
-                    guard let imageData = data, let imageObject = try? ImageObject.findOrCreateImage(with: character.thumbnail!, with: imageData, in: context) else {
-                        return _ = CharacterObject.createCharacter(with: character, imageObject: nil, in: context)
+                    if let imageData = data, let imageObject = try? ImageObject.findOrCreateImage(with: character.thumbnail!, with: imageData, in: context) {
+                        _ = CharacterObject.createCharacter(with: character, imageObject: imageObject, in: context)
+                    } else {
+                        _ = CharacterObject.createCharacter(with: character, imageObject: nil, in: context)
                     }
-                    let characterObject = CharacterObject.createCharacter(with: character, imageObject: imageObject, in: context)
-                    try? context.obtainPermanentIDs(for: [characterObject])
                 }
                 
                 self.save(context) { result in
                     switch result {
                     case .success(_): completion(true)
                     case .failure(let storeError):
-                        self.storeErrors?.append(storeError)
                         completion(false)
+                        self.storeErrors?.append(storeError)
                     }
                 }
                 

@@ -13,7 +13,10 @@ protocol Displayable {
 }
 
 struct DisplayableResource {
-    enum ResourceType { case comic, event, serie, story }
+    enum ResourceType {
+        case comic, event, serie, story
+    }
+    
     let type: ResourceType
     let id: Int
     let title: String

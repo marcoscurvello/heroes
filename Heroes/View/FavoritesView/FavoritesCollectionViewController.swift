@@ -69,7 +69,6 @@ class FavoritesCollectionViewController: UICollectionViewController {
         let selectedCharacter = favoritesViewModel.item(for: indexPath)!
         let detailViewController = HeroDetailViewController(environment: environment)
         detailViewController.character = selectedCharacter
-        detailViewController.state = .persisted
 
         detailViewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(detailViewController, animated: true)
