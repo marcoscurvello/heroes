@@ -5,7 +5,9 @@
 
 Built using Collection View `Compositional Layouts`, `Diffable Data Sources` and `Core Data`.
 
-![Heroes Screenshot](../assets/heroes_screenshot.png?raw=true)
+![Heroes List Screenshot](../assets/heroes_screenshot_0.png?raw=true)
+![Heroes Detail Screenshot](../assets/heroes_screenshot_1.png?raw=true)
+![Heroes Comic Detail Screenshot](../assets/heroes_screenshot_2.png?raw=true)
 
 
 
