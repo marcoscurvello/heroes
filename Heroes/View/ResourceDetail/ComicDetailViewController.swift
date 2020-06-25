@@ -124,7 +124,7 @@ class ComicDetailViewController: UIViewController {
         imageView.layer.cornerRadius = 5.0
         imageView.clipsToBounds = true
         imageView.contentMode = .center
-        imageView.backgroundColor = .systemGray5
+        imageView.backgroundColor = Theme.colors.imageViewBackgroundColor
         imageView.image = placeholderResourceImage
         
         imageViewConstraints = [
