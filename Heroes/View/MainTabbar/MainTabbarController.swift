@@ -8,8 +8,6 @@
 
 import UIKit
 
-
-
 class MainTabbarController: UITabBarController {
 
     enum Tab: Int, CaseIterable {
@@ -56,15 +54,15 @@ class MainTabbarController: UITabBarController {
         charactersVC = HeroListViewController(environment: environment, imageFetcher: imageFetcher, layout: CollectionViewLayoutGenerator.generateLayoutForStyle(.paginated))
 
         let itemOneNavigation = UINavigationController(rootViewController: charactersVC)
-        charactersVC.navigationController?.navigationBar.tintColor = .systemPurple
+        charactersVC.navigationController?.navigationBar.tintColor = Theme.colors.primaryColor
         charactersVC.navigationController?.navigationBar.prefersLargeTitles = true
         charactersVC.collectionView.backgroundColor = .systemBackground
         charactersVC.title = Tab.heroes.title
 
         let itemOne = UITabBarItem()
         itemOne.title = Tab.heroes.title
-        itemOne.tag = Tab.heroes.rawValue
         itemOne.image = Tab.heroes.image
+        itemOne.tag = Tab.heroes.rawValue
         charactersVC.tabBarItem = itemOne
 
 
@@ -73,23 +71,22 @@ class MainTabbarController: UITabBarController {
         favoritesVC = FavoritesCollectionViewController(environment: environment, layout: CollectionViewLayoutGenerator.generateLayoutForStyle(.favorites))
 
         let itemTwoNavigation = UINavigationController(rootViewController: favoritesVC)
-        favoritesVC.navigationController?.navigationBar.tintColor = .systemPurple
+        favoritesVC.navigationController?.navigationBar.tintColor = Theme.colors.primaryColor
         favoritesVC.navigationController?.navigationBar.prefersLargeTitles = true
         favoritesVC.collectionView.backgroundColor = .systemBackground
         favoritesVC.title = Tab.favorites.title
 
         let itemTwo = UITabBarItem()
         itemTwo.title = Tab.favorites.title
-        itemTwo.tag = Tab.favorites.rawValue
         itemTwo.image = Tab.favorites.image
+        itemTwo.tag = Tab.favorites.rawValue
         favoritesVC.tabBarItem = itemTwo
 
 
         // MARK: - Configuration
 
-        tabBar.tintColor = .systemPurple
+        tabBar.tintColor = Theme.colors.primaryColor
         viewControllers = [itemOneNavigation, itemTwoNavigation]
-
     }
 
 }

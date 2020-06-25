@@ -25,3 +25,25 @@ extension Array where Element: Displayable {
         self.isEmpty ? [] : self.map { $0.convert(type: $0) }
     }
 }
+
+extension Array where Element == Url {
+    func validComicUrl() -> Url? {
+        self.isEmpty ? nil : self.filter({ $0 == Url.inAppLink($0.url) || $0 == Url.detail($0.url)}).first
+    }
+}
+
+extension Array where Element == Price {
+    func digitalPurchasePrice() -> Price? {
+        self.isEmpty ? nil : self.filter({ $0 == Price.digitalPurchasePrice($0.price) }).first
+    }
+    
+    func printPrice() -> Price? {
+        self.isEmpty ? nil : self.filter({ $0 == Price.printPrice($0.price) }).first
+    }
+}
+
+extension Array where Element == DateContainer {
+    func onSaleDate() -> DateContainer? {
+        self.isEmpty ? nil : self.filter({ $0 == DateContainer.onSaleDate($0.date) }).first
+    }
+}

@@ -13,92 +13,43 @@ protocol HeroDetailViewModelDelegate: NSObject {
     func viewModelDidTogglePersistentence(with status: Bool)
 }
 
-class HeroDetailViewModel {
+class HeroDetailViewModel: NSObject {
     
-    var environment: Environment!
-    var imageFetcher: ImageFetcher?
+    enum State { case memory, persisted }
+    
+    var character: Character! {
+        didSet {
+            state = character.thumbnail?.data == nil ? .memory : .persisted
+            configure()
+        }
+    }
+    
+    private(set) var state: State = .memory
+    
+    let environment: Environment!
+    var dataSource: ResourceDataSource! = nil
+    var detailViewRequestManager: CharacterRequestManager?
     
     weak var delegate: HeroDetailViewModelDelegate?
-    var dataSource: ResourceDataSource! = nil
     
-    var comicsRequest: CharacterRequest<Comic>!
-    var storiesRequest: CharacterRequest<Storie>!
-    var eventsRequest: CharacterRequest<Event>!
-    var seriesRequest: CharacterRequest<Serie>!
-    
-    var comicsRequestLoader: RequestLoader<CharacterRequest<Comic>>!
-    var storiesRequestLoader: RequestLoader<CharacterRequest<Storie>>!
-    var eventsRequestLoader: RequestLoader<CharacterRequest<Event>>!
-    var seriesRequestLoader: RequestLoader<CharacterRequest<Serie>>!
-    
-    init(environment: Environment, imageFetcher: ImageFetcher? = nil) {
+    init(environment: Environment, state: State = .memory) {
+        self.state = state
         self.environment = environment
-        self.imageFetcher = imageFetcher
+        super.init()
     }
     
-    func configureResourceRequests(with characterId: Int) {
-        let identifier = String(characterId)
-        
-        comicsRequest = try? environment.server.characterComicsRequest(id: identifier)
-        storiesRequest = try? environment.server.characterStoriesRequest(id: identifier)
-        eventsRequest = try? environment.server.characterEventsRequest(id: identifier)
-        seriesRequest = try? environment.server.characterSeriesRequest(id: identifier)
-        
-        comicsRequestLoader = RequestLoader(request: comicsRequest)
-        storiesRequestLoader = RequestLoader(request: storiesRequest)
-        eventsRequestLoader = RequestLoader(request: eventsRequest)
-        seriesRequestLoader = RequestLoader(request: seriesRequest)
+    func configure() {
+        detailViewRequestManager = CharacterRequestManager(server: environment.server, delegate: self)
+        detailViewRequestManager!.configureResourceRequests(with: character.id)
+        detailViewRequestManager!.requestCharacterData()
     }
     
-    func requestCharacterData() {
-        requestComicsData()
-        requestStoriesData()
-        requestEventsData()
-        requestSeriesData()
-    }
-    
-    private func requestComicsData() {
-        comicsRequestLoader.load(data: []) { [weak self] result in
-            switch result {
-            case let .success(response): self?.applyDataSourceChange(section: .comics, resources: response.data.results.toDisplayable() )
-            case let .failure(error): self?.delegate?.viewModelDidReceiveError(error: .userFriendlyError(error))
-            }
-        }
-    }
-    
-    private func requestStoriesData() {
-        storiesRequestLoader.load(data: []) { [weak self] result in
-            switch result {
-            case let .success(response): self?.applyDataSourceChange(section: .stories, resources: response.data.results.toDisplayable() )
-            case let .failure(error): self?.delegate?.viewModelDidReceiveError(error: .userFriendlyError(error))
-            }
-        }
-    }
-    
-    private func requestSeriesData() {
-        seriesRequestLoader.load(data: []) { [weak self] result in
-            switch result {
-            case let .success(response): self?.applyDataSourceChange(section: .series, resources: response.data.results.toDisplayable() )
-            case let .failure(error): self?.delegate?.viewModelDidReceiveError(error: .userFriendlyError(error))
-            }
-        }
-    }
-    
-    private func requestEventsData() {
-        eventsRequestLoader.load(data: []) { [weak self] result in
-            switch result {
-            case let .success(response): self?.applyDataSourceChange(section: .events, resources: response.data.results.toDisplayable() )
-            case let .failure(error): self?.delegate?.viewModelDidReceiveError(error: .userFriendlyError(error))
-            }
-        }
-    }
-    
-    func applyDataSourceChange(section: ResourceDataSource.LayoutSection, resources: [DisplayableResource]) {
+    func applyDataSourceChange(section: ResourceDataSource.Section, resources: [DisplayableResource]) {
         guard !resources.isEmpty else { return }
         
         var snapshot = dataSource.snapshot()
         if snapshot.sectionIdentifiers.isEmpty {
-            snapshot.appendSections(ResourceDataSource.LayoutSection.allCases)
+            snapshot.appendSections(ResourceDataSource.Section.allCases)
         }
         
         snapshot.appendItems(resources, toSection: section)
@@ -111,5 +62,30 @@ class HeroDetailViewModel {
             delegate.viewModelDidTogglePersistentence(with: status)
         })
     }
+    
+    func composeStateChangeMessage() -> StateChangeMessage? {
+        guard let character = character else { return nil}
+        let message: StateChangeMessage!
+        
+        switch state {
+        case .memory: message = .deleteCharacter(.memory, with: character)
+        case .persisted: message = .deleteCharacter(.persisted, with: character)
+        }
+        
+        return message
+    }
+    
+}
+
+extension HeroDetailViewModel: CharacterRequestManagerDelegate {
+    
+    func requestManagerDidReceiveData(for section: ResourceDataSource.Section, data: [DisplayableResource]) {
+        applyDataSourceChange(section: section, resources: data)
+    }
+    
+    func requestManagerDidReceiveError(userFriendlyError: UserFriendlyError) {
+        delegate?.viewModelDidReceiveError(error: userFriendlyError)
+    }
+    
     
 }

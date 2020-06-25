@@ -14,6 +14,7 @@ struct Query: Equatable, Hashable {
 }
 
 extension Query {
+    
     func item() -> URLQueryItem {
         URLQueryItem(name: name, value: value)
     }
@@ -45,4 +46,5 @@ extension Query {
     static func modifiedSince(_ value: String) -> Query {
         Query(name: "modifiedSince", value: value)
     }
+    
 }

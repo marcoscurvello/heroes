@@ -29,13 +29,16 @@ struct Character: Decodable {
 }
 
 extension Character: Hashable, Equatable {
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(name)
     }
+    
     static func == (lhs: Character, rhs: Character) -> Bool {
         return lhs.id == rhs.id && lhs.name == rhs.name
     }
+    
 }
 
 extension Character: Persistable {
@@ -54,8 +57,4 @@ extension Character: Persistable {
         events = nil
         series = nil
     }
-}
-
-extension Character {
-    static let defaultDescription = "No description availiable."
 }

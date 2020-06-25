@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17132" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17105"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -49,7 +51,7 @@
                                 </label>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="KuC-fD-PAS">
                                     <rect key="frame" x="0.0" y="427.5" width="414" height="1000"/>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="1000" id="KC9-0q-Sut"/>
                                     </constraints>
@@ -63,12 +65,12 @@
                                     </collectionViewFlowLayout>
                                 </collectionView>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gBi-yC-6vA">
-                                    <rect key="frame" x="364" y="328" width="30" height="28"/>
+                                    <rect key="frame" x="364" y="330" width="30" height="28"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="28" id="7gV-EY-Smt"/>
                                         <constraint firstAttribute="width" constant="30" id="H9P-df-A9R"/>
                                     </constraints>
-                                    <color key="tintColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="tintColor" systemColor="systemOrangeColor"/>
                                     <state key="normal" image="star" catalog="system"/>
                                     <state key="selected" image="star.fill" catalog="system"/>
                                     <connections>
@@ -76,7 +78,7 @@
                                     </connections>
                                 </button>
                             </subviews>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="k28-zN-RxC" firstAttribute="top" secondItem="4Mv-md-znU" secondAttribute="bottom" constant="20" id="1EZ-Nd-tUr"/>
                                 <constraint firstItem="KuC-fD-PAS" firstAttribute="top" secondItem="k28-zN-RxC" secondAttribute="bottom" constant="30" id="1Rr-A5-O9P"/>
@@ -86,10 +88,10 @@
                                 <constraint firstAttribute="bottom" secondItem="KuC-fD-PAS" secondAttribute="bottom" id="R2C-Ho-2RR"/>
                                 <constraint firstItem="4Mv-md-znU" firstAttribute="top" secondItem="Szq-CN-Uvs" secondAttribute="bottom" constant="20" id="Rcn-p8-6dA"/>
                                 <constraint firstItem="k28-zN-RxC" firstAttribute="leading" secondItem="zzx-31-fKK" secondAttribute="leading" constant="20" id="SLL-JS-dRs"/>
-                                <constraint firstItem="gBi-yC-6vA" firstAttribute="top" secondItem="Szq-CN-Uvs" secondAttribute="bottom" constant="17.5" id="U7u-cE-lL5"/>
                                 <constraint firstAttribute="trailing" secondItem="KuC-fD-PAS" secondAttribute="trailing" id="UJa-aF-07g"/>
                                 <constraint firstItem="Szq-CN-Uvs" firstAttribute="leading" secondItem="zzx-31-fKK" secondAttribute="leading" id="Wj7-18-9xd"/>
                                 <constraint firstAttribute="trailing" secondItem="k28-zN-RxC" secondAttribute="trailing" constant="20" id="k4k-Tn-Lbr"/>
+                                <constraint firstItem="gBi-yC-6vA" firstAttribute="centerY" secondItem="4Mv-md-znU" secondAttribute="centerY" id="xAK-rb-z3d"/>
                                 <constraint firstAttribute="trailing" secondItem="gBi-yC-6vA" secondAttribute="trailing" constant="20" id="y1A-dL-WYq"/>
                                 <constraint firstItem="gBi-yC-6vA" firstAttribute="leading" secondItem="4Mv-md-znU" secondAttribute="trailing" constant="10" id="yJn-R3-HO0"/>
                                 <constraint firstAttribute="trailing" secondItem="Szq-CN-Uvs" secondAttribute="trailing" id="zl0-6C-pXi"/>
@@ -98,7 +100,7 @@
                     </subviews>
                     <constraints>
                         <constraint firstItem="zzx-31-fKK" firstAttribute="width" secondItem="Oh4-lc-ei8" secondAttribute="width" id="0do-Ht-c9W"/>
-                        <constraint firstAttribute="bottom" secondItem="zzx-31-fKK" secondAttribute="bottom" id="MG2-TB-riG"/>
+                        <constraint firstItem="zzx-31-fKK" firstAttribute="bottom" secondItem="q1h-ky-Im8" secondAttribute="bottom" id="MG2-TB-riG"/>
                         <constraint firstItem="zzx-31-fKK" firstAttribute="leading" secondItem="q1h-ky-Im8" secondAttribute="leading" id="SvY-bc-KLm"/>
                         <constraint firstAttribute="trailing" secondItem="zzx-31-fKK" secondAttribute="trailing" id="g0y-N9-wau"/>
                         <constraint firstItem="zzx-31-fKK" firstAttribute="top" secondItem="q1h-ky-Im8" secondAttribute="top" id="klm-hI-f9s"/>
@@ -107,14 +109,14 @@
                     <viewLayoutGuide key="frameLayoutGuide" id="Oh4-lc-ei8"/>
                 </scrollView>
             </subviews>
-            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="q1h-ky-Im8" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="8tm-QA-Qg1"/>
                 <constraint firstItem="q1h-ky-Im8" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Ab8-34-P5v"/>
                 <constraint firstItem="q1h-ky-Im8" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="s4c-5y-CsF"/>
                 <constraint firstItem="q1h-ky-Im8" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="s9R-mZ-CWq"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="137.68115942028987" y="152.67857142857142"/>
         </view>
     </objects>
@@ -122,5 +124,11 @@
         <image name="hero-placeholder" width="425" height="425"/>
         <image name="star" catalog="system" width="128" height="116"/>
         <image name="star.fill" catalog="system" width="128" height="116"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemOrangeColor">
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>
