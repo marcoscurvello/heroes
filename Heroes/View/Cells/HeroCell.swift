@@ -30,7 +30,7 @@ class HeroCell: UICollectionViewCell {
     }
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) should not been implemented")
     }
 
     override init(frame: CGRect) {

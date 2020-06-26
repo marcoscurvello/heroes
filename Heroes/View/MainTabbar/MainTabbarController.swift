@@ -31,11 +31,9 @@ class MainTabbarController: UITabBarController {
     var imageFetcher: ImageFetcher!
     var charactersVC: HeroListViewController!
     var favoritesVC: FavoritesCollectionViewController!
-
+    
     required init?(coder: NSCoder) {
-        self.environment = Environment(server: Server(), store: Store())
-        self.imageFetcher = ImageFetcher()
-        super.init(coder: coder)
+        fatalError("init(coder:) should not been implemented")
     }
 
     required init(environment: Environment?) {
@@ -43,6 +41,7 @@ class MainTabbarController: UITabBarController {
         self.imageFetcher = ImageFetcher()
         super.init(nibName: nil, bundle: nil)
     }
+    
 
 
     override func viewDidLoad() {

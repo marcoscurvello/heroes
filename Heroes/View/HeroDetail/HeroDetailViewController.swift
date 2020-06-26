@@ -29,18 +29,15 @@ class HeroDetailViewController: UIViewController {
         presentPersistenceStateChangeAlert()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) should not been implemented")
+    }
+    
     required init(environment: Environment, imageFetcher: ImageFetcher? = nil) {
         self.environment = environment
         self.imageFetcher = imageFetcher
         super.init(nibName: HeroDetailViewController.nibIdentifier, bundle: nil)
         
-        self.detailViewModel = HeroDetailViewModel(environment: environment)
-    }
-    
-    required init?(coder: NSCoder) {
-        self.environment = Environment(server: Server(), store: Store())
-        self.imageFetcher = ImageFetcher()
-        super.init(coder: coder)
         self.detailViewModel = HeroDetailViewModel(environment: environment)
     }
     

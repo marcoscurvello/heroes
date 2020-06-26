@@ -18,6 +18,7 @@ class TitleSupplementaryView: UICollectionReusableView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()

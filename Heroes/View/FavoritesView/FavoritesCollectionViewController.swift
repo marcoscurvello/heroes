@@ -15,9 +15,7 @@ class FavoritesCollectionViewController: UICollectionViewController {
     private let favoritesViewModel: FavoritesViewControllerModel!
 
     required init?(coder: NSCoder) {
-        self.environment = Environment(server: Server(), store: Store())
-        self.favoritesViewModel = FavoritesViewControllerModel(environment: environment)
-        super.init(coder: coder)
+        fatalError("init(coder:) should not been implemented")
     }
 
     required init(environment: Environment, layout: UICollectionViewLayout) {

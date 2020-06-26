@@ -21,9 +21,7 @@ class HeroListViewController: UICollectionViewController {
     var searchResultsViewController: SearchResultsViewController!
 
     required init?(coder: NSCoder) {
-        self.environment = Environment(server: Server(), store: Store())
-        self.imageFetcher = ImageFetcher()
-        super.init(coder: coder)
+        fatalError("init(coder:) should not been implemented")
     }
 
     required init(environment: Environment, imageFetcher: ImageFetcher, layout: UICollectionViewLayout) {

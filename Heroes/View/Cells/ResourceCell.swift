@@ -17,8 +17,7 @@ class ResourceCell: UICollectionViewCell {
     let titleLabel = UILabel()
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        configure()
+        fatalError("init(coder:) should not been implemented")
     }
     
     override init(frame: CGRect) {
