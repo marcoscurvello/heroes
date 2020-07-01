@@ -10,7 +10,7 @@ import UIKit
 
 class ComicDetailViewController: UIViewController {
     
-    private enum Titles: String {
+    private enum Title: String {
         case summary = "Summary"
         case creators = "Creators"
         case characters = "Characters"
@@ -21,6 +21,33 @@ class ComicDetailViewController: UIViewController {
         case actionButton = "View at Marvel"
     }
     
+    // MARK: - Captions
+    let summaryLabelCaption = UILabel()
+    let creatorsLabelCaption = UILabel()
+    let charactersLabelCaption = UILabel()
+    let releaseDateLabelCaption = UILabel()
+    let pageCountLabelCaption = UILabel()
+    let printPriceCaptionLabel = UILabel()
+    let digitalPriceCaptionLabel = UILabel()
+
+    
+    // MARK: - Labels
+    let titleLabel = UILabel()
+    let summaryLabel = UILabel()
+    let creatorsLabel = UILabel()
+    let charactersLabel = UILabel()
+    let releaseDateLabel = UILabel()
+    let pageCountLabel = UILabel()
+    let printPriceLabel = UILabel()
+    let digitalPriceLabel = UILabel()
+    
+    
+    // MARK: - Base
+    let scrollView = UIScrollView()
+    let contentView = UIView()
+    let actionButton = UIButton()
+    let activityIndicator = UIActivityIndicatorView()
+
     var environment: Environment?
     var imageFetcher: ImageFetcher?
     var resourceDetailViewModel: ComicDetailViewModel?
@@ -45,26 +72,13 @@ class ComicDetailViewController: UIViewController {
         configurePrintPrice()
         configureDigitalPrice()
         configureActionButton()
-        activateConstraints()
-        
+
         resourceDetailViewModel = ComicDetailViewModel(environment: environment!, delegate: self)
         resourceDetailViewModel!.resource = resource
         resourceDetailViewModel!.request()
     }
     
-    private func activateConstraints() {
-        NSLayoutConstraint.activate(imageViewConstraints)
-        NSLayoutConstraint.activate(titleLabelConstraints)
-        NSLayoutConstraint.activate(summaryConstraints)
-        NSLayoutConstraint.activate(creatorsConstraints)
-        NSLayoutConstraint.activate(charactersConstraints)
-        NSLayoutConstraint.activate(releaseDateConstraints)
-        NSLayoutConstraint.activate(pagesConstraints)
-        NSLayoutConstraint.activate(printPriceConstraints)
-        NSLayoutConstraint.activate(digitalPriceConstraints)
-        NSLayoutConstraint.activate(actionButtonConstraints)
-    }
-    
+    // MARK: Default Values
     let innerSpacing = CGFloat(10)
     let outterSpacing = CGFloat(20)
     
@@ -74,12 +88,8 @@ class ComicDetailViewController: UIViewController {
     let defaultCaptionColor = UIColor.label
     let defaultBodyColor = UIColor.secondaryLabel
     
+    
     // MARK: - UIScrollView
-    
-    let contentView = UIView()
-    let scrollView = UIScrollView()
-    let activityIndicator = UIActivityIndicatorView()
-    
     private func configure() {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,6 +102,24 @@ class ComicDetailViewController: UIViewController {
         view.addSubview(scrollView)
         
         contentView.addSubview(activityIndicator)
+        contentView.addSubview(imageView)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(summaryLabel)
+        contentView.addSubview(summaryLabelCaption)
+        contentView.addSubview(creatorsLabel)
+        contentView.addSubview(creatorsLabelCaption)
+        contentView.addSubview(charactersLabel)
+        contentView.addSubview(charactersLabelCaption)
+        contentView.addSubview(releaseDateLabel)
+        contentView.addSubview(releaseDateLabelCaption)
+        contentView.addSubview(pageCountLabel)
+        contentView.addSubview(pageCountLabelCaption)
+        contentView.addSubview(printPriceLabel)
+        contentView.addSubview(printPriceCaptionLabel)
+        contentView.addSubview(digitalPriceLabel)
+        contentView.addSubview(digitalPriceCaptionLabel)
+        contentView.addSubview(actionButton)
+        
         scrollView.addSubview(contentView)
         scrollView.showsVerticalScrollIndicator = false
         
@@ -116,7 +144,6 @@ class ComicDetailViewController: UIViewController {
     // MARK: - UIImageView
     
     let imageView = UIImageView()
-    var imageViewConstraints = [NSLayoutConstraint]()
     
     private func configureImageView() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -127,22 +154,16 @@ class ComicDetailViewController: UIViewController {
         imageView.backgroundColor = Theme.colors.imageViewBackgroundColor
         imageView.image = placeholderResourceImage
         
-        imageViewConstraints = [
+        NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: outterSpacing),
             imageView.widthAnchor.constraint(equalToConstant: 138.0),
             imageView.heightAnchor.constraint(equalToConstant: 214.0),
             imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
-        ]
-        
-        contentView.addSubview(imageView)
+        ])
     }
     
     
-    // MARK: - UILabel Title
-    
-    let titleLabel = UILabel()
-    var titleLabelConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Title
     private func configureTitleLabel() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -150,23 +171,16 @@ class ComicDetailViewController: UIViewController {
         titleLabel.textAlignment = .left
         titleLabel.font = Theme.fonts.titleFont
         
-        titleLabelConstraints = [
+        NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: outterSpacing),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
             titleLabel.bottomAnchor.constraint(equalTo: summaryLabelCaption.topAnchor, constant: -outterSpacing),
             titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
-        ]
-        
-        contentView.addSubview(titleLabel)
+        ])
     }
     
-    // MARK: - UILabel Summary
-    
-    let summaryLabel = UILabel()
-    let summaryLabelCaption = UILabel()
-    var summaryConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Summary
     private func configureSummary() {
         summaryLabel.translatesAutoresizingMaskIntoConstraints = false
         summaryLabelCaption.translatesAutoresizingMaskIntoConstraints = false
@@ -179,26 +193,18 @@ class ComicDetailViewController: UIViewController {
         summaryLabel.textAlignment = .left
         summaryLabel.textColor = defaultBodyColor
         summaryLabel.font = defaultBodyFont
-        
-        summaryConstraints = [
+
+        NSLayoutConstraint.activate([
             summaryLabelCaption.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             summaryLabelCaption.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
             summaryLabelCaption.bottomAnchor.constraint(equalTo: summaryLabel.topAnchor, constant: -innerSpacing),
             summaryLabel.leadingAnchor.constraint(equalTo: summaryLabelCaption.leadingAnchor),
-            summaryLabel.trailingAnchor.constraint(equalTo: summaryLabelCaption.trailingAnchor),
-        ]
-        
-        contentView.addSubview(summaryLabel)
-        contentView.addSubview(summaryLabelCaption)
+            summaryLabel.trailingAnchor.constraint(equalTo: summaryLabelCaption.trailingAnchor)
+        ])
     }
     
     
-    // MARK: - UILabel Creators
-    
-    let creatorsLabel = UILabel()
-    let creatorsLabelCaption = UILabel()
-    var creatorsConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Creators
     private func configureCreators() {
         creatorsLabelCaption.translatesAutoresizingMaskIntoConstraints = false
         creatorsLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -212,7 +218,7 @@ class ComicDetailViewController: UIViewController {
         creatorsLabel.textColor = defaultBodyColor
         creatorsLabel.font = defaultBodyFont
         
-        creatorsConstraints = [
+        NSLayoutConstraint.activate([
             creatorsLabelCaption.topAnchor.constraint(equalTo: summaryLabel.bottomAnchor, constant: outterSpacing),
             creatorsLabelCaption.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             creatorsLabelCaption.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
@@ -221,18 +227,10 @@ class ComicDetailViewController: UIViewController {
             creatorsLabel.leadingAnchor.constraint(equalTo: creatorsLabelCaption.leadingAnchor),
             creatorsLabel.trailingAnchor.constraint(equalTo: creatorsLabelCaption.trailingAnchor),
             creatorsLabel.bottomAnchor.constraint(equalTo: charactersLabelCaption.topAnchor, constant: -outterSpacing)
-        ]
-        
-        contentView.addSubview(creatorsLabel)
-        contentView.addSubview(creatorsLabelCaption)
+        ])
     }
     
-    // MARK: - UILabel  Characters
-    
-    let charactersLabel = UILabel()
-    let charactersLabelCaption = UILabel()
-    var charactersConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Characters
     private func configureCharacters() {
         charactersLabelCaption.translatesAutoresizingMaskIntoConstraints = false
         charactersLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -246,7 +244,7 @@ class ComicDetailViewController: UIViewController {
         charactersLabel.textColor = defaultBodyColor
         charactersLabel.font = defaultBodyFont
         
-        charactersConstraints = [
+        NSLayoutConstraint.activate([
             charactersLabelCaption.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             charactersLabelCaption.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
             charactersLabelCaption.bottomAnchor.constraint(equalTo: charactersLabel.topAnchor, constant: -innerSpacing),
@@ -254,18 +252,10 @@ class ComicDetailViewController: UIViewController {
             charactersLabel.leadingAnchor.constraint(equalTo: charactersLabelCaption.leadingAnchor),
             charactersLabel.trailingAnchor.constraint(equalTo: charactersLabelCaption.trailingAnchor),
             charactersLabel.bottomAnchor.constraint(equalTo: releaseDateLabelCaption.topAnchor, constant: -outterSpacing)
-        ]
-        
-        contentView.addSubview(charactersLabel)
-        contentView.addSubview(charactersLabelCaption)
+        ])
     }
     
-    // MARK: - UILabel Release Date
-    
-    let releaseDateLabel = UILabel()
-    let releaseDateLabelCaption = UILabel()
-    var releaseDateConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Release Date
     private func configureReleaseDate() {
         releaseDateLabelCaption.translatesAutoresizingMaskIntoConstraints = false
         releaseDateLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -278,7 +268,7 @@ class ComicDetailViewController: UIViewController {
         releaseDateLabel.textColor = defaultBodyColor
         releaseDateLabel.font = defaultBodyFont
         
-        releaseDateConstraints = [
+        NSLayoutConstraint.activate([
             releaseDateLabelCaption.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             releaseDateLabelCaption.trailingAnchor.constraint(equalTo: pageCountLabelCaption.leadingAnchor, constant: -outterSpacing),
             releaseDateLabelCaption.bottomAnchor.constraint(equalTo: releaseDateLabel.topAnchor, constant: -innerSpacing),
@@ -286,18 +276,10 @@ class ComicDetailViewController: UIViewController {
             releaseDateLabel.leadingAnchor.constraint(equalTo: releaseDateLabelCaption.leadingAnchor),
             releaseDateLabel.trailingAnchor.constraint(equalTo: releaseDateLabelCaption.trailingAnchor),
             releaseDateLabel.bottomAnchor.constraint(equalTo: pageCountLabel.bottomAnchor)
-        ]
-        
-        contentView.addSubview(releaseDateLabel)
-        contentView.addSubview(releaseDateLabelCaption)
+        ])
     }
     
-    // MARK: - UILabel Pages
-    
-    let pageCountLabel = UILabel()
-    let pageCountLabelCaption = UILabel()
-    var pagesConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Pages
     private func configurePages() {
         pageCountLabelCaption.translatesAutoresizingMaskIntoConstraints = false
         pageCountLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -310,7 +292,7 @@ class ComicDetailViewController: UIViewController {
         pageCountLabel.textColor = defaultBodyColor
         pageCountLabel.font = defaultBodyFont
         
-        pagesConstraints = [
+        NSLayoutConstraint.activate([
             pageCountLabelCaption.leadingAnchor.constraint(equalTo: releaseDateLabelCaption.trailingAnchor, constant: outterSpacing),
             pageCountLabelCaption.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
             pageCountLabelCaption.bottomAnchor.constraint(equalTo: pageCountLabel.topAnchor, constant: -innerSpacing),
@@ -318,19 +300,10 @@ class ComicDetailViewController: UIViewController {
             pageCountLabel.leadingAnchor.constraint(equalTo: pageCountLabelCaption.leadingAnchor),
             pageCountLabel.trailingAnchor.constraint(equalTo: pageCountLabelCaption.trailingAnchor),
             pageCountLabel.bottomAnchor.constraint(equalTo: printPriceCaptionLabel.topAnchor, constant: -outterSpacing)
-        ]
-        
-        contentView.addSubview(pageCountLabel)
-        contentView.addSubview(pageCountLabelCaption)
+        ])
     }
     
-    
-    // MARK: - UILabel Print Price
-    
-    let printPriceLabel = UILabel()
-    let printPriceCaptionLabel = UILabel()
-    var printPriceConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Print Price
     private func configurePrintPrice() {
         printPriceCaptionLabel.translatesAutoresizingMaskIntoConstraints = false
         printPriceLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -343,7 +316,7 @@ class ComicDetailViewController: UIViewController {
         printPriceLabel.textColor = defaultBodyColor
         printPriceLabel.font = defaultBodyFont
         
-        printPriceConstraints = [
+        NSLayoutConstraint.activate([
             printPriceCaptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             printPriceCaptionLabel.trailingAnchor.constraint(equalTo: pageCountLabelCaption.leadingAnchor, constant: -outterSpacing),
             printPriceCaptionLabel.bottomAnchor.constraint(equalTo: printPriceLabel.topAnchor, constant: -innerSpacing),
@@ -351,19 +324,11 @@ class ComicDetailViewController: UIViewController {
             printPriceLabel.leadingAnchor.constraint(equalTo: printPriceCaptionLabel.leadingAnchor),
             printPriceLabel.trailingAnchor.constraint(equalTo: printPriceCaptionLabel.trailingAnchor),
             printPriceLabel.bottomAnchor.constraint(lessThanOrEqualTo: actionButton.topAnchor, constant: -outterSpacing)
-        ]
-        
-        contentView.addSubview(printPriceLabel)
-        contentView.addSubview(printPriceCaptionLabel)
+        ])
     }
     
     
-    // MARK: - UILabel Digital Price
-    
-    let digitalPriceLabel = UILabel()
-    let digitalPriceCaptionLabel = UILabel()
-    var digitalPriceConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Digital Price
     private func configureDigitalPrice() {
         digitalPriceCaptionLabel.translatesAutoresizingMaskIntoConstraints = false
         digitalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -376,7 +341,7 @@ class ComicDetailViewController: UIViewController {
         digitalPriceLabel.textColor = defaultBodyColor
         digitalPriceLabel.font = defaultBodyFont
         
-        digitalPriceConstraints = [
+        NSLayoutConstraint.activate([
             digitalPriceCaptionLabel.leadingAnchor.constraint(equalTo: printPriceCaptionLabel.trailingAnchor, constant: outterSpacing),
             digitalPriceCaptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
             digitalPriceCaptionLabel.bottomAnchor.constraint(equalTo: digitalPriceLabel.topAnchor, constant: -innerSpacing),
@@ -384,41 +349,30 @@ class ComicDetailViewController: UIViewController {
             digitalPriceCaptionLabel.centerYAnchor.constraint(equalTo: printPriceCaptionLabel.centerYAnchor),
             
             digitalPriceLabel.leadingAnchor.constraint(equalTo: digitalPriceCaptionLabel.leadingAnchor),
-            digitalPriceLabel.trailingAnchor.constraint(equalTo: digitalPriceCaptionLabel.trailingAnchor),
-        ]
-        
-        contentView.addSubview(digitalPriceLabel)
-        contentView.addSubview(digitalPriceCaptionLabel)
+            digitalPriceLabel.trailingAnchor.constraint(equalTo: digitalPriceCaptionLabel.trailingAnchor)
+        ])
     }
     
     
-    // MARK: - UIButton Action
-    
-    let actionButton = UIButton()
-    var actionButtonConstraints = [NSLayoutConstraint]()
-    
+    // MARK: - Action Button
     private func configureActionButton() {
         actionButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        actionButton.clipsToBounds = true
         actionButton.layer.cornerRadius = 10.0
         
-        actionButton.setTitle(Titles.actionButton.rawValue, for: .normal)
+        actionButton.setTitle(Title.actionButton.rawValue, for: .normal)
         actionButton.setTitleColor(.white, for: .normal)
         actionButton.titleLabel!.font = UIFont.systemFont(ofSize: 16.0, weight: .semibold)
         actionButton.addTarget(self, action: #selector(followResourceURL), for: .touchUpInside)
-        
         actionButton.isEnabled = false
+        actionButton.clipsToBounds = true
         actionButton.backgroundColor = .systemGray5
         
-        actionButtonConstraints = [
+        NSLayoutConstraint.activate([
             actionButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: outterSpacing),
             actionButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -outterSpacing),
             actionButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -outterSpacing),
             actionButton.heightAnchor.constraint(equalToConstant: 50.0)
-        ]
-        
-        contentView.addSubview(actionButton)
+        ])
     }
     
     @objc private func followResourceURL() {
@@ -434,37 +388,37 @@ class ComicDetailViewController: UIViewController {
         titleLabel.text = details.title
         
         if let summary = details.summary {
-            summaryLabelCaption.text = Titles.summary.rawValue
+            summaryLabelCaption.text = Title.summary.rawValue
             summaryLabel.text = summary
         }
         
         if let creators = details.creators {
-            creatorsLabelCaption.text = Titles.creators.rawValue
+            creatorsLabelCaption.text = Title.creators.rawValue
             creatorsLabel.text = creators
         }
         
         if let characters = details.characters {
-            charactersLabelCaption.text = Titles.characters.rawValue
+            charactersLabelCaption.text = Title.characters.rawValue
             charactersLabel.text = characters
         }
         
         if let releaseDate = details.releaseDate {
-            releaseDateLabelCaption.text = Titles.relaseDate.rawValue
+            releaseDateLabelCaption.text = Title.relaseDate.rawValue
             releaseDateLabel.text = releaseDate
         }
         
         if let pageCount = details.pages {
-            pageCountLabelCaption.text = Titles.pages.rawValue
+            pageCountLabelCaption.text = Title.pages.rawValue
             pageCountLabel.text = pageCount
         }
         
         if let printPrice = details.printPrice {
-            printPriceCaptionLabel.text = Titles.printPrice.rawValue
+            printPriceCaptionLabel.text = Title.printPrice.rawValue
             printPriceLabel.text = printPrice
         }
         
         if let digitalPrice = details.digitalPrice {
-            digitalPriceCaptionLabel.text = Titles.digitalPrice.rawValue
+            digitalPriceCaptionLabel.text = Title.digitalPrice.rawValue
             digitalPriceLabel.text = digitalPrice
         }
         
