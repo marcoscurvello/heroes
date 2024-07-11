@@ -19,14 +19,6 @@ private func throwIfNotZero(_ status: OSStatus) throws {
     throw KeychainError.keychainError(status: status)
 }
 
-extension Dictionary {
-    func adding(key: Key, value: Value) -> Dictionary {
-        var copy = self
-        copy[key] = value
-        return copy
-    }
-}
-
 @propertyWrapper
 final public class KeychainItem {
     private let account: String
