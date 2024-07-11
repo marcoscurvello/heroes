@@ -8,13 +8,6 @@
 
 import Foundation
 
-protocol Request {
-    associatedtype RequestDataType
-    associatedtype ResponseDataType
-    func composeRequest(with data: RequestDataType) throws -> URLRequest
-    func parse(data: Data?) throws -> ResponseDataType
-}
-
 struct CharacterRequest<A: Decodable>: Request {
     
     typealias ResponseDataType = Response<DataContainer<A>>
