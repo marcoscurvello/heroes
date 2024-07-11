@@ -22,6 +22,7 @@
 		2731F4982C402D560050AB63 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2731F4972C402D560050AB63 /* Request.swift */; };
 		2731F49A2C402E550050AB63 /* RequestLoaderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2731F4992C402E550050AB63 /* RequestLoaderError.swift */; };
 		2731F49C2C4039E30050AB63 /* DictionaryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2731F49B2C4039E30050AB63 /* DictionaryExtensions.swift */; };
+		2731F49E2C403BDB0050AB63 /* KeychainItemError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2731F49D2C403BDB0050AB63 /* KeychainItemError.swift */; };
 		273E14722489FD7000F7E9A1 /* CharacterRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273E14712489FD7000F7E9A1 /* CharacterRequest.swift */; };
 		273E14752489FDC100F7E9A1 /* NetworkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273E14742489FDC000F7E9A1 /* NetworkModel.swift */; };
 		273E14772489FDF200F7E9A1 /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273E14762489FDF200F7E9A1 /* Query.swift */; };
@@ -116,6 +117,7 @@
 		2731F4972C402D560050AB63 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		2731F4992C402E550050AB63 /* RequestLoaderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLoaderError.swift; sourceTree = "<group>"; };
 		2731F49B2C4039E30050AB63 /* DictionaryExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryExtensions.swift; sourceTree = "<group>"; };
+		2731F49D2C403BDB0050AB63 /* KeychainItemError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainItemError.swift; sourceTree = "<group>"; };
 		273E14712489FD7000F7E9A1 /* CharacterRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterRequest.swift; sourceTree = "<group>"; };
 		273E14742489FDC000F7E9A1 /* NetworkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkModel.swift; sourceTree = "<group>"; };
 		273E14762489FDF200F7E9A1 /* Query.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 			children = (
 				27B3EBFD2486E01700391E83 /* KeychainItem.swift */,
 				27AF43E52486E42A0055788E /* HashedItem.swift */,
+				2731F49D2C403BDB0050AB63 /* KeychainItemError.swift */,
 			);
 			path = PropertyWrappers;
 			sourceTree = "<group>";
@@ -645,6 +648,7 @@
 				277F579A249A04B10025E327 /* ImageObject.swift in Sources */,
 				2711C681248C181E00B34BF4 /* Event.swift in Sources */,
 				277F5799249A04B10025E327 /* Heroes.xcdatamodeld in Sources */,
+				2731F49E2C403BDB0050AB63 /* KeychainItemError.swift in Sources */,
 				271221F924A41FEB0048F90F /* ResourceRequestManager.swift in Sources */,
 				2711C67D248BFAED00B34BF4 /* SearchResultsViewController.swift in Sources */,
 				277F579D249A056E0025E327 /* UIViewController.swift in Sources */,

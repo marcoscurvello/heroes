@@ -9,16 +9,6 @@
 import Foundation
 import Security
 
-public enum KeychainError: Error {
-    case invalidData
-    case keychainError(status: OSStatus)
-}
-
-private func throwIfNotZero(_ status: OSStatus) throws {
-    guard status != 0 else { return }
-    throw KeychainError.keychainError(status: status)
-}
-
 @propertyWrapper
 final public class KeychainItem {
     private let account: String
@@ -83,5 +73,12 @@ final public class KeychainItem {
     private func add(_ secret: String) throws {
         let dictionary = baseDictionary.adding(key: kSecValueData as String, value: secret.data(using: .utf8)! as AnyObject)
         try throwIfNotZero(SecItemAdd(dictionary as CFDictionary, nil))
+    }
+}
+
+extension KeychainItem {
+    private func throwIfNotZero(_ status: OSStatus) throws {
+        guard status != 0 else { return }
+        throw KeychainError.keychainError(status: status)
     }
 }
