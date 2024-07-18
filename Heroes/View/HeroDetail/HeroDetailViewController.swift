@@ -103,7 +103,7 @@ extension HeroDetailViewController: HeroDetailViewModelDelegate {
         presentAlertWithError(message: error, callback: { _ in})
     }
     
-    func viewModelDidTogglePersistentence(with status: Bool) {
+    func viewModelDidTogglePersistence(with status: Bool) {
         guard status else { return }
         animateFavoriteButtonSelection()
     }

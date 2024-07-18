@@ -80,7 +80,6 @@
 		27DA74A62486D43F000B40FE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DA74A52486D43F000B40FE /* SceneDelegate.swift */; };
 		27DA74B02486D440000B40FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27DA74AF2486D440000B40FE /* Assets.xcassets */; };
 		27DA74B32486D440000B40FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 27DA74B12486D440000B40FE /* LaunchScreen.storyboard */; };
-		27DA74BE2486D440000B40FE /* HeroesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DA74BD2486D440000B40FE /* HeroesTests.swift */; };
 		27DA74C92486D440000B40FE /* HeroesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DA74C82486D440000B40FE /* HeroesUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -178,7 +177,6 @@
 		27DA74B22486D440000B40FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		27DA74B42486D440000B40FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27DA74B92486D440000B40FE /* HeroesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeroesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		27DA74BD2486D440000B40FE /* HeroesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroesTests.swift; sourceTree = "<group>"; };
 		27DA74BF2486D440000B40FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27DA74C42486D440000B40FE /* HeroesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HeroesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		27DA74C82486D440000B40FE /* HeroesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroesUITests.swift; sourceTree = "<group>"; };
@@ -213,8 +211,8 @@
 		271221FA24A41FF70048F90F /* ResourceRequest */ = {
 			isa = PBXGroup;
 			children = (
-				271221F824A41FEB0048F90F /* ResourceRequestManager.swift */,
 				27CCB2FA24A16BC00047C45B /* ResourceRequest.swift */,
+				271221F824A41FEB0048F90F /* ResourceRequestManager.swift */,
 			);
 			path = ResourceRequest;
 			sourceTree = "<group>";
@@ -477,7 +475,6 @@
 				2746F66D248A0AA00064A8AC /* ModelTests */,
 				273E147A2489FEAE00F7E9A1 /* NetworkTests */,
 				27B3EBFF2486E0E600391E83 /* PropertyWrapperTests */,
-				27DA74BD2486D440000B40FE /* HeroesTests.swift */,
 				27DA74BF2486D440000B40FE /* Info.plist */,
 			);
 			path = HeroesTests;
@@ -707,7 +704,6 @@
 				2746F671248A0E440064A8AC /* NetworkModelTests.swift in Sources */,
 				27B3EC012486E0F700391E83 /* KeychainItemTests.swift in Sources */,
 				2746F67A248A1F510064A8AC /* ServerTests.swift in Sources */,
-				27DA74BE2486D440000B40FE /* HeroesTests.swift in Sources */,
 				2746F66A248A092C0064A8AC /* RequestLoaderTests.swift in Sources */,
 				2746F66C248A094D0064A8AC /* MockURLProtocol.swift in Sources */,
 				27AF43E82486E5740055788E /* HashedItemTests.swift in Sources */,

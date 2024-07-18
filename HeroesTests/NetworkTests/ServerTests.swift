@@ -12,7 +12,8 @@ import XCTest
 class ServerTests: XCTestCase {
     
     override func tearDown() {
-        Server.shared.invalidateCredentials()
+        let server = Server()
+        server.invalidateCredentials()
     }
     
     func testServerDefaultBaseURL() {

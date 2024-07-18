@@ -59,7 +59,7 @@ class RequestLoaderTests: XCTestCase {
             
             switch result {
             case .failure(let error):
-                XCTAssertEqual(error, RequestLoaderError.ServerSide(ServerSideError(statusCode: 401, response: HTTPURLResponse())))
+                XCTAssertEqual(error, RequestLoaderError.ServerSide(.init(statusCode: 401, response: HTTPURLResponse())))
             default:
                 XCTFail("No Error")
             }

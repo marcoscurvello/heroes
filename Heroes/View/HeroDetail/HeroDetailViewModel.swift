@@ -10,7 +10,7 @@ import Foundation
 
 protocol HeroDetailViewModelDelegate: NSObject {
     func viewModelDidReceiveError(error: UserFriendlyError)
-    func viewModelDidTogglePersistentence(with status: Bool)
+    func viewModelDidTogglePersistence(with status: Bool)
 }
 
 class HeroDetailViewModel: NSObject {
@@ -59,7 +59,7 @@ class HeroDetailViewModel: NSObject {
     func toggleCharacterPersistenceState(with message: StateChangeMessage, data: Data?) {
         environment.store.toggleStorage(for: message.character, with: data, completion: { [weak self] status in
             guard status, let self = self, let delegate = self.delegate else { return }
-            delegate.viewModelDidTogglePersistentence(with: status)
+            delegate.viewModelDidTogglePersistence(with: status)
         })
     }
     
