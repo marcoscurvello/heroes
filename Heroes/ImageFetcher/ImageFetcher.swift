@@ -6,97 +6,92 @@
 //  Copyright © 2020 Marcos Curvello. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
-class ImageFetcher {
+final class ImageFetcher {
 
-    fileprivate let blacklisIdentifiers: [String] = [
+    fileprivate let blacklistIdentifiers: [String] = [
         "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg",
         "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708.gif"
     ]
 
-    private let serialAccessQueue = OperationQueue()
+    private let serialAccessQueue = DispatchQueue(label: "com.imagefetcher.serialAccess")
     private let fetchQueue = OperationQueue()
 
-    private var completionHandlers = [String: [(UIImage?) -> Void]]()
+    private let completionHandlers = NSMapTable<NSString, NSMutableArray>.strongToStrongObjects()
     private var cache = NSCache<NSString, UIImage>()
 
-    init() {
-        serialAccessQueue.maxConcurrentOperationCount = 1
-    }
+    func image(for identifier: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        serialAccessQueue.async { [weak self] in
+            guard let self else { return }
 
-    func image(for identifier: String, completion: ((UIImage?) -> Void)? = nil) {
-        guard !blacklisIdentifiers.contains(identifier) else {
-            if let completion = completion {
-                completion(nil)
+            guard !self.blacklistIdentifiers.contains(identifier) else {
+                completion(.failure(ImageFetcherError.blacklisted))
+                return
             }
-            return
-        }
 
-        serialAccessQueue.addOperation {
-            if let completion = completion {
-                let handlers = self.completionHandlers[identifier, default: []]
-                self.completionHandlers[identifier] = handlers + [completion]
-            }
+            let handlers = self.completionHandlers.object(forKey: identifier as NSString) ?? NSMutableArray()
+            handlers.add(completion)
+            self.completionHandlers.setObject(handlers, forKey: identifier as NSString)
             self.fetchData(for: identifier)
         }
     }
 
     func cachedImage(for identifier: String) -> UIImage? {
-        return cache.object(forKey: identifier as NSString)
+        cache.object(forKey: identifier as NSString)
     }
 
     func cancelFetch(_ identifier: String) {
-        serialAccessQueue.addOperation {
-            self.fetchQueue.isSuspended = true
-            defer {
-                self.fetchQueue.isSuspended = false
-            }
-            self.operation(for: identifier)?.cancel()
-            self.completionHandlers[identifier] = nil
-        }
-    }
+        serialAccessQueue.async { [weak self] in
+            guard let self else { return }
 
-    func fetchData(for identifier: String) {
-        guard operation(for: identifier) == nil else {
-            return
-        }
-
-        if let image = cachedImage(for: identifier) {
-            invokeCompletionHandlers(for: identifier, with: image)
-
-        } else {
-
-            let operation = ImageFetchOperation(identifier: identifier)
-            operation.completionBlock = { [weak operation] in
-
-                guard let image = operation?.fetchedImage else { return }
-                self.cache.setObject(image, forKey: identifier as NSString)
-                self.serialAccessQueue.addOperation {
-                    self.invokeCompletionHandlers(for: identifier, with: image)
+            self.fetchQueue.operations.forEach { operation in
+                if let imageOperation = operation as? ImageFetchOperation,
+                   imageOperation.identifier == identifier {
+                    imageOperation.cancel()
                 }
             }
 
+            self.completionHandlers.removeObject(forKey: identifier as NSString)
+        }
+    }
+
+    private func fetchData(for identifier: String) {
+        if let image = cachedImage(for: identifier) {
+            invokeCompletionHandlers(for: identifier, with: .success(image))
+        } else if !isOperationInProgress(for: identifier) {
+
+            let operation = ImageFetchOperation(identifier: identifier)
+            operation.completionBlock = { [weak self, weak operation] in
+                guard let self, let operation, !operation.isCancelled else { return }
+
+                if let image = operation.fetchedImage {
+                    self.cache.setObject(image, forKey: identifier as NSString)
+                    self.invokeCompletionHandlers(for: identifier, with: .success(image))
+                } else if let error = operation.error {
+                    self.invokeCompletionHandlers(for: identifier, with: .failure(error))
+                }
+            }
             fetchQueue.addOperation(operation)
         }
     }
 
-    private func operation(for identifier: String) -> ImageFetchOperation? {
-        for case let fetchOperation as ImageFetchOperation in fetchQueue.operations
-            where !fetchOperation.isCancelled && fetchOperation.identifier == identifier {
-                return fetchOperation
-        }
-
-        return nil
-    }
-
-    private func invokeCompletionHandlers(for identifier: String, with fetchedData: UIImage) {
-        let completionHandlers = self.completionHandlers[identifier, default: []]
-        self.completionHandlers[identifier] = nil
-
-        for completionHandler in completionHandlers {
-            completionHandler(fetchedData)
+    private func isOperationInProgress(for identifier: String) -> Bool {
+        fetchQueue.operations.contains { operation in
+            guard let imageOperation = operation as? ImageFetchOperation else { return false }
+            return !imageOperation.isCancelled && imageOperation.identifier == identifier
         }
     }
 
+    private func invokeCompletionHandlers(for identifier: String, with result: Result<UIImage, Error>) {
+        serialAccessQueue.async { [weak self] in
+            guard let self else { return }
+            guard let handlers = self.completionHandlers.object(forKey: identifier as NSString) as? [((Result<UIImage, Error>) -> Void)] else { return }
+            self.completionHandlers.removeObject(forKey: identifier as NSString)
+            DispatchQueue.main.async {
+                handlers.forEach { $0(result) }
+            }
+        }
+    }
 }
