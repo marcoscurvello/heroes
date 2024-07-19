@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HeroListViewController: UICollectionViewController {
+final class HeroListViewController: UICollectionViewController {
 
     private let environment: Environment!
     private let imageFetcher: ImageFetcher!
@@ -112,9 +112,8 @@ extension HeroListViewController: HeroCellDelegate {
     func heroCellFavoriteButtonTapped(cell: HeroCell) {
         guard let character = cell.character else { return }
         let imageData = cell.imageView.image?.pngData()
-        environment.store.toggleStorage(for: character, with: imageData, completion: { _ in})
+        environment.store.toggleStorage(for: character, with: imageData, completion: { _ in })
     }
-
 }
 
 
@@ -123,9 +122,8 @@ extension HeroListViewController: HeroCellDelegate {
 extension HeroListViewController: HeroListViewModelErrorHandler, SearchResultsViewModelErrorHandler {
 
     func viewModelDidReceiveError(error: UserFriendlyError) {
-        presentAlertWithError(message: error, callback: {_ in})
+        presentAlertWithError(message: error, callback: { _ in })
     }
-
 }
 
 
@@ -157,12 +155,16 @@ extension HeroListViewController {
             default:
                 cell.update(image: nil)
 
-                self.imageFetcher.image(for: identifier) { [weak cell] image in
-                    guard let cell = cell, cell.representedIdentifier == identifier else {
+                self.imageFetcher.image(for: identifier) { [weak cell] fetchImageResult in
+                    guard let cell, cell.representedIdentifier == identifier else {
                         self.imageFetcher.cancelFetch(identifier)
                         return
                     }
-                    cell.update(image: image)
+
+                    switch fetchImageResult {
+                    case .success(let image): cell.update(image: image)
+                    case .failure(_): break
+                    }
                 }
             }
 
@@ -173,12 +175,20 @@ extension HeroListViewController {
         dataSource.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
             switch kind {
             case LoaderReusableView.elementKind:
-                let loaderSuplementary = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: LoaderReusableView.reuseIdentifier, for: indexPath) as! LoaderReusableView
-                return loaderSuplementary
+                let loaderSupplementary = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: LoaderReusableView.reuseIdentifier,
+                    for: indexPath
+                ) as! LoaderReusableView
+                return loaderSupplementary
             case SearchReusableView.elementKind:
-                let searchSuplementary = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SearchReusableView.reuseIdentifier, for: indexPath) as! SearchReusableView
-                self?.searchResultsViewController.searchInfoView = searchSuplementary
-                return searchSuplementary
+                let searchSupplementary = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: SearchReusableView.reuseIdentifier,
+                    for: indexPath
+                ) as! SearchReusableView
+                self?.searchResultsViewController.searchInfoView = searchSupplementary
+                return searchSupplementary
             default:
                 return nil
             }

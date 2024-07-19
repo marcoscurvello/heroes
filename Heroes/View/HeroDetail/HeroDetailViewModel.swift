@@ -78,14 +78,13 @@ class HeroDetailViewModel: NSObject {
 }
 
 extension HeroDetailViewModel: CharacterRequestManagerDelegate {
-    
+
     func requestManagerDidReceiveData(for section: ResourceDataSource.Section, data: [DisplayableResource]) {
         applyDataSourceChange(section: section, resources: data)
     }
-    
+
     func requestManagerDidReceiveError(userFriendlyError: UserFriendlyError) {
         delegate?.viewModelDidReceiveError(error: userFriendlyError)
     }
-    
-    
+
 }
