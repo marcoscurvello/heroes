@@ -74,6 +74,7 @@
 		27C98295248F902800A5151E /* Comic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C98294248F902800A5151E /* Comic.swift */; };
 		27CCB2FB24A16BC00047C45B /* ResourceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCB2FA24A16BC00047C45B /* ResourceRequest.swift */; };
 		27D14A242C4AC0D7000F5C32 /* ComicDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D14A232C4AC0D7000F5C32 /* ComicDetailViewController.swift */; };
+		27D14A262C4AC69B000F5C32 /* ImageFetcherError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D14A252C4AC69B000F5C32 /* ImageFetcherError.swift */; };
 		27D61D18248EE57400B26475 /* HeroDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D61D16248EE57400B26475 /* HeroDetailViewController.swift */; };
 		27D61D19248EE57400B26475 /* HeroDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27D61D17248EE57400B26475 /* HeroDetailViewController.xib */; };
 		27DA74A42486D43F000B40FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DA74A32486D43F000B40FE /* AppDelegate.swift */; };
@@ -168,6 +169,7 @@
 		27C98294248F902800A5151E /* Comic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comic.swift; sourceTree = "<group>"; };
 		27CCB2FA24A16BC00047C45B /* ResourceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceRequest.swift; sourceTree = "<group>"; };
 		27D14A232C4AC0D7000F5C32 /* ComicDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComicDetailViewController.swift; sourceTree = "<group>"; };
+		27D14A252C4AC69B000F5C32 /* ImageFetcherError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFetcherError.swift; sourceTree = "<group>"; };
 		27D61D16248EE57400B26475 /* HeroDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroDetailViewController.swift; sourceTree = "<group>"; };
 		27D61D17248EE57400B26475 /* HeroDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeroDetailViewController.xib; sourceTree = "<group>"; };
 		27DA74A02486D43F000B40FE /* Heroes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Heroes.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -230,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				27A7119E249D6BDB0043E64C /* ImageFetcher.swift */,
+				27D14A252C4AC69B000F5C32 /* ImageFetcherError.swift */,
 				27A7119D249D6BDB0043E64C /* ImageFetchOperation.swift */,
 			);
 			path = ImageFetcher;
@@ -656,6 +659,7 @@
 				2731F49C2C4039E30050AB63 /* DictionaryExtensions.swift in Sources */,
 				272B3BB0248A5BEB00E8F09A /* LoaderReusableView.swift in Sources */,
 				2731F49A2C402E550050AB63 /* RequestLoaderError.swift in Sources */,
+				27D14A262C4AC69B000F5C32 /* ImageFetcherError.swift in Sources */,
 				272B3BA6248A570C00E8F09A /* SearchReusableView.swift in Sources */,
 				278EEEA3248D8A9900E1D080 /* Serie.swift in Sources */,
 				27809FE3249B725D002B8858 /* ArrayExtensions.swift in Sources */,

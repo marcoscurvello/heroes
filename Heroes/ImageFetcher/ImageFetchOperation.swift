@@ -6,28 +6,76 @@
 //  Copyright © 2020 Marcos Curvello. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
-class ImageFetchOperation: Operation {
-
+final class ImageFetchOperation: Operation {
     let identifier: String
-    private(set) var fetchedImage: UIImage?
+    var fetchedImage: UIImage?
+    var error: Error?
 
-    init(identifier: String) {
+    private var task: URLSessionDataTask?
+    private let session: URLSession
+    private var imageData: Data?
+
+    init(identifier: String, session: URLSession = .shared) {
         self.identifier = identifier
+        self.session = session
+        super.init()
     }
 
     override func main() {
-
         guard !isCancelled else { return }
 
-        guard let url = URL(string: identifier), let data = try? Data(contentsOf: url) else {
+        guard let url = URL(string: identifier) else {
+            error = ImageFetcherError.invalidURL
             return
         }
 
-        guard !isCancelled else { return }
+        let semaphore = DispatchSemaphore(value: 0)
 
-        fetchedImage = UIImage(data: data)
+        task = session.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                self.error = error
+                semaphore.signal()
+                return
+            }
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                self.error = ImageFetcherError.invalidResponse(response: response)
+                semaphore.signal()
+                return
+            }
+
+            guard (200...299).contains(httpResponse.statusCode) else {
+                self.error = ImageFetcherError.invalidStatus(statusCode: httpResponse.statusCode)
+                semaphore.signal()
+                return
+            }
+
+            guard let data else {
+                self.error = ImageFetcherError.invalidData
+                semaphore.signal()
+                return
+            }
+
+            if let image = UIImage(data: data) {
+                self.fetchedImage = image
+            } else {
+                self.error = ImageFetcherError.invalidImageData
+            }
+
+            semaphore.signal()
+        }
+
+        task?.resume()
+        semaphore.wait()
     }
 
+    override func cancel() {
+        super.cancel()
+        task?.cancel()
+    }
 }
