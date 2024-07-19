@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		271061FA24A341BD00F9B730 /* ComicDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271061F924A341BD00F9B730 /* ComicDetailViewController.swift */; };
 		2711C679248B1AF600B34BF4 /* CollectionViewLayoutGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2711C678248B1AF600B34BF4 /* CollectionViewLayoutGenerator.swift */; };
 		2711C67D248BFAED00B34BF4 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2711C67C248BFAED00B34BF4 /* SearchResultsViewController.swift */; };
 		2711C681248C181E00B34BF4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2711C680248C181E00B34BF4 /* Event.swift */; };
@@ -74,6 +73,7 @@
 		27C98293248F702400A5151E /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C98292248F702400A5151E /* Helpers.swift */; };
 		27C98295248F902800A5151E /* Comic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C98294248F902800A5151E /* Comic.swift */; };
 		27CCB2FB24A16BC00047C45B /* ResourceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCB2FA24A16BC00047C45B /* ResourceRequest.swift */; };
+		27D14A242C4AC0D7000F5C32 /* ComicDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D14A232C4AC0D7000F5C32 /* ComicDetailViewController.swift */; };
 		27D61D18248EE57400B26475 /* HeroDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D61D16248EE57400B26475 /* HeroDetailViewController.swift */; };
 		27D61D19248EE57400B26475 /* HeroDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 27D61D17248EE57400B26475 /* HeroDetailViewController.xib */; };
 		27DA74A42486D43F000B40FE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DA74A32486D43F000B40FE /* AppDelegate.swift */; };
@@ -101,7 +101,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		271061F924A341BD00F9B730 /* ComicDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ComicDetailViewController.swift; path = Heroes/View/ResourceDetail/ComicDetailViewController.swift; sourceTree = SOURCE_ROOT; };
 		2711C678248B1AF600B34BF4 /* CollectionViewLayoutGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewLayoutGenerator.swift; sourceTree = "<group>"; };
 		2711C67C248BFAED00B34BF4 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
 		2711C680248C181E00B34BF4 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -168,6 +167,7 @@
 		27C98292248F702400A5151E /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		27C98294248F902800A5151E /* Comic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comic.swift; sourceTree = "<group>"; };
 		27CCB2FA24A16BC00047C45B /* ResourceRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceRequest.swift; sourceTree = "<group>"; };
+		27D14A232C4AC0D7000F5C32 /* ComicDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComicDetailViewController.swift; sourceTree = "<group>"; };
 		27D61D16248EE57400B26475 /* HeroDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroDetailViewController.swift; sourceTree = "<group>"; };
 		27D61D17248EE57400B26475 /* HeroDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeroDetailViewController.xib; sourceTree = "<group>"; };
 		27DA74A02486D43F000B40FE /* Heroes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Heroes.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -342,7 +342,7 @@
 				277F57A2249A097E0025E327 /* FavoritesView */,
 				272B3B9B248A541E00E8F09A /* SearchResults */,
 				272B3BAB248A578100E8F09A /* HeroDetail */,
-				27CCB2FC24A16DA10047C45B /* ResourceDetail */,
+				27CCB2FC24A16DA10047C45B /* ComicDetail */,
 				278EEEA8248D8D2500E1D080 /* Cells */,
 			);
 			path = View;
@@ -395,13 +395,6 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		27910BE224A3348300A830DF /* ComicDetail */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ComicDetail;
-			sourceTree = "<group>";
-		};
 		27B3EBFF2486E0E600391E83 /* PropertyWrapperTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -420,14 +413,13 @@
 			path = State;
 			sourceTree = "<group>";
 		};
-		27CCB2FC24A16DA10047C45B /* ResourceDetail */ = {
+		27CCB2FC24A16DA10047C45B /* ComicDetail */ = {
 			isa = PBXGroup;
 			children = (
-				27910BE224A3348300A830DF /* ComicDetail */,
 				275BBEA924A2AA0400ECF477 /* ComicDetailViewModel.swift */,
-				271061F924A341BD00F9B730 /* ComicDetailViewController.swift */,
+				27D14A232C4AC0D7000F5C32 /* ComicDetailViewController.swift */,
 			);
-			path = ResourceDetail;
+			path = ComicDetail;
 			sourceTree = "<group>";
 		};
 		27DA74972486D43F000B40FE = {
@@ -661,7 +653,6 @@
 				273E14752489FDC100F7E9A1 /* NetworkModel.swift in Sources */,
 				27C9828C248F4C0800A5151E /* HeroListViewModel.swift in Sources */,
 				27C98295248F902800A5151E /* Comic.swift in Sources */,
-				271061FA24A341BD00F9B730 /* ComicDetailViewController.swift in Sources */,
 				2731F49C2C4039E30050AB63 /* DictionaryExtensions.swift in Sources */,
 				272B3BB0248A5BEB00E8F09A /* LoaderReusableView.swift in Sources */,
 				2731F49A2C402E550050AB63 /* RequestLoaderError.swift in Sources */,
@@ -679,6 +670,7 @@
 				27A711A0249D6BDB0043E64C /* ImageFetcher.swift in Sources */,
 				277F5798249A04B10025E327 /* FavoriteHeroesController.swift in Sources */,
 				278EEEA1248C604D00E1D080 /* ComicCell.swift in Sources */,
+				27D14A242C4AC0D7000F5C32 /* ComicDetailViewController.swift in Sources */,
 				27C98290248F4C6000A5151E /* HeroCell.swift in Sources */,
 				27C841EB24A3FAFD00681BA5 /* Theme.swift in Sources */,
 				27C841E724A39E4400681BA5 /* Price.swift in Sources */,
