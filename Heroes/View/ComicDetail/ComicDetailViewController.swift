@@ -476,11 +476,15 @@ class ComicDetailViewController: UIViewController {
         
         guard let imageFetcher = imageFetcher, let identifier = resource?.thumbnail?.absoluteString else { return }
         
-        imageFetcher.image(for: identifier) { [weak imageView] image in
-            guard let image = image else { return }
-            DispatchQueue.main.async {
-                imageView?.image = image
-                imageView?.contentMode = .scaleToFill
+        imageFetcher.image(for: identifier) { [weak imageView] imageFetchResult in
+            guard let imageView else { return }
+
+            switch imageFetchResult {
+            case .success(let image):
+                imageView.image = image
+                imageView.contentMode = .scaleToFill
+            case .failure(let error): print("Image fetch error \(#function): \(error)")
+
             }
         }
     }
@@ -490,15 +494,15 @@ class ComicDetailViewController: UIViewController {
 // MARK: - ComicDetailViewModelDelegate
 
 extension ComicDetailViewController: ComicDetailViewModelDelegate {
-    
+
     func viewModelDidReceiveData(details: ComicDetailViewModel.ComicDetails) {
         DispatchQueue.main.async {
             self.present(with: details)
         }
     }
-    
+
     func viewModelDidReceiveError(error: UserFriendlyError) {
         presentAlertWithError(message: error, callback: { _ in})
     }
-    
+
 }
