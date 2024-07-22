@@ -474,16 +474,11 @@ final class ComicDetailViewController: UIViewController {
             actionButton.backgroundColor = Theme.colors.primaryColor
         }
 
-        guard let imageFetcher = imageFetcher, let identifier = resource?.thumbnail?.absoluteString else { return }
-
-        imageFetcher.image(for: identifier) { [weak imageView] imageFetchResult in
-            guard let imageView else { return }
-
-            switch imageFetchResult {
-            case .success(let image):
-                imageView.image = image
-                imageView.contentMode = .scaleToFill
-            case .failure(_): break
+        guard let imageFetcher, let identifier = resource?.thumbnail?.absoluteString else { return }
+        Task { [weak imageView] in
+            let image = try await imageFetcher.image(for: identifier)
+            DispatchQueue.main.async {
+                imageView?.image = image
             }
         }
     }

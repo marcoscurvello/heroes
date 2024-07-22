@@ -76,16 +76,11 @@ final class HeroDetailViewController: UIViewController {
             imageView.image = image
         } else {
 
-            guard let imageFetcher = imageFetcher, let identifier = character.thumbnail?.absoluteString else { return }
-            imageFetcher.image(for: identifier) { [weak imageView] fetchImageResult in
-                guard let imageView  else { return }
-
-                switch fetchImageResult {
-                case .success(let image):
-                    DispatchQueue.main.async {
-                        imageView.image = image
-                    }
-                case .failure(_): break
+            guard let imageFetcher, let identifier = character.thumbnail?.absoluteString else { return }
+            Task { [weak imageView] in
+                let image = try await imageFetcher.image(for: identifier)
+                DispatchQueue.main.async {
+                    imageView?.image = image
                 }
             }
         }
@@ -180,25 +175,11 @@ extension HeroDetailViewController: UICollectionViewDelegate {
             }
 
             cell.representedIdentifier = identifier
-            let image = self.imageFetcher?.cachedImage(for: identifier)
+            Task { [weak self, weak cell] in
+                guard let self else { return }
 
-            switch image {
-            case .some(let image): cell.update(image: image)
-
-            default:
-                cell.update(image: nil)
-
-                self.imageFetcher?.image(for: identifier) { [weak self] imageFetchResult in
-                    guard cell.representedIdentifier == identifier else {
-                        self?.imageFetcher?.cancelFetch(identifier)
-                        return
-                    }
-
-                    switch imageFetchResult {
-                    case .success(let image): cell.update(image: image)
-                    case .failure(_): break
-                    }
-                }
+                let image = try await self.imageFetcher?.image(for: identifier)
+                cell?.update(image: image)
             }
 
             return cell

@@ -134,7 +134,7 @@ extension HeroListViewController {
     public func generateDataSource(for collectionView: UICollectionView) -> HeroDataSource {
 
         let dataSource = HeroDataSource(collectionView: collectionView, cellProvider: { [weak self] (collectionView, indexPath, character) -> UICollectionViewCell? in
-            guard let self = self else { return nil }
+            guard let self else { return nil }
 
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HeroCell.reuseIdentifier, for: indexPath) as! HeroCell
 
@@ -147,32 +147,18 @@ extension HeroListViewController {
             }
 
             cell.representedIdentifier = identifier
-
-            let image = self.imageFetcher.cachedImage(for: identifier)
-            switch image {
-            case .some(let image):
-                cell.update(image: image)
-            default:
-                cell.update(image: nil)
-
-                self.imageFetcher.image(for: identifier) { [weak cell] fetchImageResult in
-                    guard let cell, cell.representedIdentifier == identifier else {
-                        self.imageFetcher.cancelFetch(identifier)
-                        return
-                    }
-
-                    switch fetchImageResult {
-                    case .success(let image): cell.update(image: image)
-                    case .failure(_): break
-                    }
+            Task { [weak self, weak cell] in
+                let image = try await self?.imageFetcher.image(for: identifier)
+                DispatchQueue.main.async {
+                    cell?.update(image: image)
                 }
             }
 
             return cell
-
         })
 
         dataSource.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
+
             switch kind {
             case LoaderReusableView.elementKind:
                 let loaderSupplementary = collectionView.dequeueReusableSupplementaryView(
